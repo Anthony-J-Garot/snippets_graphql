@@ -3,3 +3,4 @@
 
 # Any open vim file
 *.swp
+*.pyc
