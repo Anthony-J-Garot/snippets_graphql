@@ -1,0 +1,117 @@
+# This file isn't actually run or called or anything like that.
+# It's just a collection of GraphQL snippets I sometimes copy/paste
+# into the GraphiQL playground.
+#
+# Each of these worked at some time; but code changes over time, and
+# so some of these may be stale. Look into the unit tests for working
+# examples of GraphQL with this system.
+
+# -------------------------------------------------------------------
+
+# A subscription to monitor "update snippets" events.
+# Returns the whole payload.
+subscription subteranean($group: String) {
+  onSnippetEvent(broadcastGroup: $group) {
+    broadcastGroup
+    sender
+    snippet {
+      id
+      title
+      private
+      created
+    }
+  }
+}
+
+# Payload
+{
+  "group": "UPDATE"
+}
+
+# -------------------------------------------------------------------
+
+# A subscription to monitor all snippets (C.UD) events.
+# Returns the whole payload.
+subscription subNoGroup {
+  onSnippetNoGroup {
+    sender
+    snippet {
+      id
+      title
+      private
+      created
+    }
+  }
+}
+
+# Payload
+
+<no payload>
+
+# -------------------------------------------------------------------
+
+# CREATE
+mutation createSnippet($input: SnippetInput!) {
+  createSnippet(input: $input) {
+    snippet {
+      title
+      body
+      private
+    }
+    ok
+  }
+}
+
+# Payload
+{
+  "input": {
+    "title": "This is a new snippet",
+    "body": "Homer simpsons was here",
+    "created": "2012-04-23T18:25:43.511Z",
+    "private": true
+  }
+}
+
+# -------------------------------------------------------------------
+
+# UPDATE
+mutation updateSnippet($id: ID!, $input: SnippetInput!) {
+  updateSnippet(id: $id, input: $input) {
+    snippet {
+      title
+      body
+      private
+      bodyPreview
+    }
+    ok
+  }
+}
+
+# Payload
+{
+  "id": "2",
+  "input": {
+    "title": "Updated Title",
+    "body": "Homer simpson has left the building",
+    "private": false
+  }
+}
+
+# UPDATE w/ embedded payload
+# Could be used in a unit test, for example.
+mutation updateSnippet {
+  updateSnippet(id: "2", input: {
+		title: "Updated Title", 
+		body: "Homer simpson has left the building", 
+		private: false
+  }) {
+    snippet {
+      title
+      body
+      private
+      bodyPreview
+    }
+    ok
+  }
+}
+

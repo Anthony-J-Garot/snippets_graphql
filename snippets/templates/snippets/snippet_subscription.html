@@ -1,0 +1,22 @@
+{% extends 'snippets/base.html' %}
+{% load static %}
+
+{% block title %}{{ view.title }}{% endblock title %}
+
+{% block content %}
+
+    <p>{{ view.title }}</p>
+
+    <textarea id="json" cols="45" rows="20"></textarea>
+    <BR/>
+    <input id="btn-clear-log" type="button" value="Clear">
+    <input id="disconnect" type="button" value="Disconnect">
+
+{% endblock content %}
+
+{% block script %}
+    <script src="{% static 'snippets/transactions.js' %}" type="text/javascript"></script>
+    <script src="{% static 'snippets/group.js' %}" type="text/javascript"></script>
+{% endblock script %}
+
+

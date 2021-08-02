@@ -1,0 +1,22 @@
+{% extends 'snippets/base.html' %}
+
+{% block title %}{{ view.title }}{% endblock title %}
+
+{% block content %}
+
+    <p>{{ view.title }}</p>
+
+    <form action="/create/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+{% endblock content %}
+
+{% block script %}{% endblock script %}
+
+
+

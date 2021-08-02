@@ -1,0 +1,183 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$260000$RJZxFyOFf34dvWHXECkEjf$QcR7AUIAuyS0i25OB3aRxN8Y1hEffI6njZx6SfbT9R8=",
+        "last_login": "2021-08-02T14:59:09.586Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@mysite.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-07-27T14:52:49.574Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$260000$U3MFGRnXiscdcQtBCwoeZI$m47dCWj5ngpEONpkfHMjS2Y9IXAlJmRG1mwFHH6/Zms=",
+        "last_login": "2021-07-30T22:27:15.224Z",
+        "is_superuser": false,
+        "username": "john.smith",
+        "first_name": "John",
+        "last_name": "Smith",
+        "email": "john.smith@mysite.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-07-29T22:33:44Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "0nbta1tgjmjsnca3ag6pdpzwzowz2mgc",
+    "fields": {
+        "session_data": "e30:1m9CCT:CgMMA8njoHPUuBvqIQoXqJIOPuKTBHiEuVJ1ajf07Z0",
+        "expire_date": "2021-08-12T20:00:13.555Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "4vb6hwktz471eekfqcb0uv84lidpq81e",
+    "fields": {
+        "session_data": "e30:1m9Cm5:IGADqP8c1nq49uqnEpnzXFq0uZF78PKOIBAUbrdS3HY",
+        "expire_date": "2021-08-12T20:37:01.676Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "6tbmfhu2o9eq42qnuu779tyqvkvk4cht",
+    "fields": {
+        "session_data": "e30:1m9CFP:-IXau3GH-lXuz8fmkTUae7-Q0B7-f5XiUOGukgFl7sE",
+        "expire_date": "2021-08-12T20:03:15.933Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "a5l99vdb52v4s67prk6whjod4uon1bur",
+    "fields": {
+        "session_data": "e30:1m9CEC:0hR5YAuqsd9nu9sJNRLTOtFGhSs5AEjus3QPjL0vktQ",
+        "expire_date": "2021-08-12T20:02:00.958Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "ecy0r1gyul7hnkgotdrel0qh8s3usoo2",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mAZPJ:wuAPAxkG0c7LDRqmq46PHru5sFZr2hjN5yHVfProBvo",
+        "expire_date": "2021-08-16T14:59:09.592Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "t2luc14a75kykio4w9046i15pqmpbwdk",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAQRO_iGlm2409CSZ8zWLvrDQ4gR4qTCnF3HCkFFNPMezNvEWHfctwrr3FO4iqMuPx2CPTkcoD0gHJfJC1lW2eUhyJPWuW4JH7dTvfvIEPNba3JuA5pUqwoGBUAerAd-MkG5RACKO97PbCxgyYwyJ5aHHuNKTVNfL7noTh3:1m9Ese:E6QIw3IhN4KQZl89zYInl3dsHv8OLAHM5csIXt7w0Tw",
+        "expire_date": "2021-08-12T22:51:56.130Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "vlun906n4ca2wlnvwg114l4sf47tw5dw",
+    "fields": {
+        "session_data": "e30:1m9BCt:D_SMBkIqKJHATV9-oiC49JmYoAAkBm2Q5zxu541EIsk",
+        "expire_date": "2021-08-12T18:56:35.963Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 1,
+    "fields": {
+        "title": "Media Item #1",
+        "body": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "owner": "john.smith",
+        "private": true,
+        "created": "2018-06-13T08:02:21.517Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 2,
+    "fields": {
+        "title": "Titles are for books",
+        "body": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "owner": "admin",
+        "private": false,
+        "created": "2012-04-23T18:25:43.511Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 3,
+    "fields": {
+        "title": "Blog Entry #3",
+        "body": "Chick Corea on the keyboards",
+        "owner": "admin",
+        "private": false,
+        "created": "2021-07-16T18:36:50.206Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 4,
+    "fields": {
+        "title": "Musical Item #4",
+        "body": "Herbie Hancock",
+        "owner": "john.smith",
+        "private": false,
+        "created": "2021-07-16T18:36:50.206Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 5,
+    "fields": {
+        "title": "News Item #5",
+        "body": "Tony Williams Lifetime",
+        "owner": "tony.williams",
+        "private": true,
+        "created": "2021-07-16T18:36:50.206Z"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+        "action_time": "2021-07-29T22:33:44.938Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "auth",
+            "user"
+        ],
+        "object_id": "2",
+        "object_repr": "john.smith",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+        "action_time": "2021-07-29T22:34:09.328Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "auth",
+            "user"
+        ],
+        "object_id": "2",
+        "object_repr": "john.smith",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\", \"Email address\", \"Staff status\"]}}]"
+    }
+}
+]
