@@ -17,6 +17,7 @@ urlpatterns = [
     path('owner/', views.SnippetAuthenticatedListView.as_view(title='Owner Snippets'), name='owner_list'),
     path('<int:pk>/', views.SnippetDetailView.as_view(), name='detail'),
 
-    # Form
+    # Form paths
     path('create/', views.create, name='create'),
+    path('mutation_create/', views.mutation_create, name='mutation_create'),
 ]

@@ -1,0 +1,40 @@
+{% extends 'snippets/base.html' %}
+
+{% block title %}{{ view.title }}{% endblock title %}
+
+{% block content %}
+
+    <p>{{ view.title }}</p>
+
+    <form action="{% url "snippets:create" %}" method="post">
+        {% csrf_token %}
+        <table>
+            {% for field in form %}
+                {% if field.name == 'owner' %}
+                    <div class="fieldWrapper">
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ user }}
+                        <p class="help">{{ field.help_text|safe }}</p>
+                    </div>
+                {% else %}
+                    <div class="fieldWrapper">
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ field }}
+                        {% if field.help_text %}
+                            <p class="help">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </table>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+{% endblock content %}
+
+{% block script %}{% endblock script %}
+
+
+

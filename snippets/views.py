@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from .forms import SnippetForm
 
@@ -86,6 +87,7 @@ class SnippetSubscriptionView(TemplateView):
     """
     template_name = 'snippets/snippet_subscription.html'
 
+
 def create(request):
     """
 Primitive form handling function until I get things sorted.
@@ -93,11 +95,29 @@ I might turn this into a class if that's possible for forms.
     """
 
     if request.method == "POST":
-        form = SnippetForm(request.POST)
+
+        # VALIDATE POST DATA
+        # https://stackoverflow.com/questions/22210046/django-form-what-is-the-best-way-to-modify-posted-data-before-validating
+        post = request.POST.copy()  # to make mutable
+        post['owner'] = request.user.username
+
+        # Transmogrify into form object
+        form = SnippetForm(post)
 
         if form.is_valid():
-            return redirect('/thanks/')
+            form.save()  # Persist the data
+
+            # The benefit of a redirect is that a reload doesn't insert another row into the DB.
+            # To send a notification message, I'd have to do it in the URL queryString.
+            # This could do it: https://realpython.com/django-redirects/#passing-parameters-with-redirects
+            return render(request, 'snippets/success.html', {'notice': 'Created just fine'})
+        else:
+            # Errors are typically trapped on the front-end, but just in case
+            # something falls through, like a required field that isn't on the
+            # form, send something to the log file.
+            print(form.errors)
     else:
         form = SnippetForm()
 
-    return render(request, 'snippets/snippetform.html', {'form': form})
+    return render(request, 'snippets/create.html', {'form': form})
+

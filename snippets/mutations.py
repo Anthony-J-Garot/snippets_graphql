@@ -56,7 +56,6 @@ class CreateSnippetMutation(graphene.Mutation):
         # Notice we return an instance of this mutation
         return CreateSnippetMutation(snippet=snippet, ok=True)
 
-
 class UpdateSnippetMutation(graphene.Mutation):
     # The class attributes define the response of the mutation
     snippet = graphene.Field(lambda: SnippetType)

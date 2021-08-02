@@ -16,15 +16,16 @@
 <!-- Any notices go towards the top -->
 <header>
     {% if notice %}
-        <p class="notice">{{ notice }}</p>B
+        <p class="notice">{{ notice }}</p>
+    {% else %}
+        <p>&nbsp;</p>
     {% endif %}
-    <BR/>
 </header>
 
 <div class="container">
     <div class="row">
-        <div class="col-2 navigation">
-            <p>Navigation</p>
+        <div class="col-3 navigation">
+            <p><a href="/">Navigation</a></p>
             <ul>
                 <li><a href="{% url 'snippets:all_list' %}">All snippets</a></li>
                 <li><a href="{% url 'snippets:public_list' %}">Public snippets</a></li>
@@ -33,7 +34,8 @@
                     <li><a href="{% url 'snippets:owner_list' %}">My snippets [{{ user }}'s]</a></li>
                 {% endif %}
                 <li><a href="{% url 'snippets:subscription_all' %}" target="subscription">Snippets Real-time</a></li>
-                <li><a href="{% url 'snippets:create' %}">Create</a></li>
+                <li><a href="{% url 'snippets:create' %}">Create Snippet (Django)</a></li>
+                <li><a href="{% url 'snippets:mutation_create' %}">Create Snippet (Mutation)</a></li>
                 <li><a href="/admin">Admin Functions</a></li>
                 <li><a href="/graphql" target="graphiQL">GraphiQL</a></li>
             </ul>
