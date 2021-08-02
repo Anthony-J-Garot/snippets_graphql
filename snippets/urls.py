@@ -19,5 +19,4 @@ urlpatterns = [
 
     # Form paths
     path('create/', views.create, name='create'),
-    path('mutation_create/', views.mutation_create, name='mutation_create'),
 ]

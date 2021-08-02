@@ -10,8 +10,11 @@ import graphene
 import asgiref
 from channels.auth import login
 
+from graphene_django.forms.mutation import DjangoModelFormMutation
+
 from .models import Snippet  # From this tutorial
 from .types import SnippetType
+from .forms import SnippetForm
 
 from .subscriptions import OnSnippetTransaction  # one group name
 from .subscriptions import OnSnippetNoGroup  # no group names
@@ -55,6 +58,31 @@ class CreateSnippetMutation(graphene.Mutation):
 
         # Notice we return an instance of this mutation
         return CreateSnippetMutation(snippet=snippet, ok=True)
+
+
+# YYZ - experimenting with this now
+class FormCreateSnippetMutation(DjangoModelFormMutation):
+    """
+DjangoModelFormMutation will pull the fields from a ModelForm,
+which means I don't have to specify an Arguments section.
+    """
+    snippet = graphene.Field(lambda: SnippetType)
+    # snippet = graphene.Field(SnippetType)
+    ok = graphene.Boolean()
+
+    class Meta:
+        form_class = SnippetForm  # This is my ModelForm
+        # input_field_name = 'data'
+        # return_field_name = 'my_pet'
+
+    def perform_mutate(form, info):
+        print("This only runs when the form is valid")
+        # print(form)
+        print(form["private"].data)
+        print(form["body"].data)
+        # print(info)
+        return FormCreateSnippetMutation(snippet=None, ok=True)
+
 
 class UpdateSnippetMutation(graphene.Mutation):
     # The class attributes define the response of the mutation
@@ -146,3 +174,4 @@ class Mutation(graphene.ObjectType):
     create_snippet = CreateSnippetMutation.Field()
     delete_snippet = DeleteSnippetMutation.Field()
     login = Login.Field()
+    create_form_snippet = FormCreateSnippetMutation.Field()
