@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'user',  # User management app in this project
     'graphene_django',  # ***
     'channels',  # Wasn't originally needed, but adding websockets
+    'corsheaders' # CORS - to allow React front-end on port 3000
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # CORS
+    'django.middleware.common.CommonMiddleware', # CORS
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -149,3 +152,11 @@ GRAPHENE = {
     "SUBSCRIPTION_PATH": "/graphql/",
     'MIDDLEWARE': []  # https://github.com/eamigo86/graphene-django-subscriptions/issues/7
 }
+
+# This is easy, but opens the server up to attack
+# CORS_ALLOW_ALL_ORIGINS = True
+
+# This specifies a React front-end example I'm building.
+CORS_ORIGIN_WHITELIST = (
+    'http://192.168.2.99:3000',
+)
