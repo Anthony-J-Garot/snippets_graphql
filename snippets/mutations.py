@@ -48,6 +48,7 @@ class CreateSnippetMutation(graphene.Mutation):
         snippet.title = input['title']
         snippet.body = input['body']
         snippet.private = input['private']
+        snippet.owner = info.context.user.username  # Set by the API only
         snippet.save()
 
         # print(vars(snippet))
@@ -60,14 +61,17 @@ class CreateSnippetMutation(graphene.Mutation):
         return CreateSnippetMutation(snippet=snippet, ok=True)
 
 
-# YYZ - experimenting with this now
 class FormCreateSnippetMutation(DjangoModelFormMutation):
     """
 DjangoModelFormMutation will pull the fields from a ModelForm,
-which means I don't have to specify an Arguments section.
+which basically means I don't have to specify an Arguments section
+like I did in CreateSnippetMutation.
+
+If the form is set up properly, this is, perhaps, a better approach
+because of the inherent server-side form validation and ease of
+coding the "save" action.
     """
     snippet = graphene.Field(lambda: SnippetType)
-    # snippet = graphene.Field(SnippetType)
     ok = graphene.Boolean()
 
     class Meta:
@@ -76,12 +80,26 @@ which means I don't have to specify an Arguments section.
         # return_field_name = 'my_pet'
 
     def perform_mutate(form, info):
-        print("This only runs when the form is valid")
-        # print(form)
-        print(form["private"].data)
-        print(form["body"].data)
-        # print(info)
-        return FormCreateSnippetMutation(snippet=None, ok=True)
+        """
+Runs (perform the mutation) only if the form is valid.
+        """
+
+        snippet = form.instance  # shorthand to the model instance
+        snippet.owner = info.context.user.username  # Set by the API only
+
+        # Various ways we can see all the things
+        # print(vars(form))
+        # print(form["private"].data)
+        # print(form["body"].data)
+        # print(form["owner"].data)
+
+        snippet.save()  # Persist the data of this model instance
+
+        # Notify subscribers.
+        OnSnippetTransaction.snippet_event(broadcast_group="CREATE", sender="SENDER", snippet=snippet)
+        OnSnippetNoGroup.snippet_event(trans_type="CREATE", sender="SENDER", snippet=snippet)
+
+        return FormCreateSnippetMutation(snippet=snippet, ok=True)
 
 
 class UpdateSnippetMutation(graphene.Mutation):

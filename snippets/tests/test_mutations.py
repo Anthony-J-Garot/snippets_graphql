@@ -38,7 +38,7 @@ class SnippetsTestCase(GraphQLTestCase):
         # for the ease of the unit test.
         response = self.query(
             '''
-mutation createSnippet($input: SnippetInput!) {
+mutation mutCreateSnippet($input: SnippetInput!) {
   createSnippet(input: $input) {
     snippet {
       title
@@ -49,7 +49,7 @@ mutation createSnippet($input: SnippetInput!) {
   }
 }
             ''',
-            op_name='createSnippet',
+            op_name='mutCreateSnippet',
             variables={"input": payload}
         )
 
@@ -70,6 +70,53 @@ mutation createSnippet($input: SnippetInput!) {
         self.assertEquals(
             payload,
             content['data']['createSnippet']['snippet'],
+            "Variables should have passed through"
+        )
+
+    # ./runtests.sh test_mutations test_form_snippet_create_mutation
+    def test_form_snippet_create_mutation(self):
+        payload = {
+            "title": "This is a new snippet",
+            "body": "Homer simpsons was here",
+            "private": True
+        }
+
+        # Here I request back only those items specified in the payload
+        # for the ease of the unit test.
+        response = self.query(
+            '''
+mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
+  createFormSnippet(input: $input) {
+    snippet {
+      title
+      body
+      private
+    }
+    ok
+  }
+}
+            ''',
+            op_name='mutFormCreateSnippet',
+            variables={"input": payload}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if you get errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        self.assertTrue(
+            content['data']['createFormSnippet']['ok'],
+            "Record should have been created"
+        )
+
+        # Ensure values passed through
+        self.assertEquals(
+            payload,
+            content['data']['createFormSnippet']['snippet'],
             "Variables should have passed through"
         )
 

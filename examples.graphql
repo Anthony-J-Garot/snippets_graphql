@@ -51,7 +51,7 @@ subscription subNoGroup {
 # -------------------------------------------------------------------
 
 # CREATE
-mutation createSnippet($input: SnippetInput!) {
+mutation mutCreateSnippet($input: SnippetInput!) {
   createSnippet(input: $input) {
     snippet {
       title
@@ -71,6 +71,28 @@ mutation createSnippet($input: SnippetInput!) {
     "private": true
   }
 }
+
+
+# Slightly different that above. This uses a DjangoModelFormMutation.
+mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
+  createFormSnippet(input: $input) {
+    snippet {
+      title
+      body
+      private
+    }
+    ok
+  }
+}
+
+{
+  "input": {
+    "title": "This is a new snippet",
+    "body": "Homer simpsons was here",
+    "private": true
+  }
+}
+
 
 # -------------------------------------------------------------------
 
