@@ -85,7 +85,7 @@ Runs (perform the mutation) only if the form is valid.
         """
 
         snippet = form.instance  # shorthand to the model instance
-        snippet.owner = info.context.user.username  # Set by the API only
+        snippet.owner = info.context.user  # Set by the API only; this is AnonymousUser when not authenticated
 
         # Various ways we can see all the things
         # print(vars(form))

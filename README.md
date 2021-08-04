@@ -96,7 +96,7 @@ Also because I may transition to pytest in the future. It looks to be
 a more robust testing platform.
 
 
-# Other useful links / resources
+# Useful links / resources
 
 - [GitHub repo tutorial](https://github.com/alexisrolland/flask-graphene-sqlalchemy/wiki/Flask-Graphene-SQLAlchemy-Tutorial#schema_peoplepy)
   with a lot of usable example code. A pity I found this late in the game.
@@ -105,3 +105,4 @@ also had a tutorial. By going through it, I added much
 to the original "snippets" tutorial above.
 - [This article](https://morningpython.com/2019/12/20/how-to-build-graphql-api-with-django-7-steps/)
 was reasonable. He did point out using GraphiQL.
+- [Graphene Documentation](https://readthedocs.org/projects/graphene-django/downloads/pdf/stable/)
