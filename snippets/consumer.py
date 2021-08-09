@@ -15,8 +15,16 @@ class MyGraphqlWsConsumer(channels_graphql_ws.GraphqlWsConsumer):
     The consumer maintains WebSocket connection with the client.
     """
 
-    # Handle WebSocket connection event
     async def on_connect(self, payload):
+        """
+Handle WebSocket connection event.
+The connection may send connection params, which can be found in the payload.
+For example, the client may send an authToken that can be handled here.
+        """
+
+        # print("on_connect payload: ", payload)
+        if "authToken" in payload:
+            print("Client passed authToken of [{}]".format(payload["authToken"]))
 
         # Use auxiliary Channels function `get_user` to replace an
         # instance of `channels.auth.UserLazyObject` with a native
