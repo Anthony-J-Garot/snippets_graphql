@@ -12,6 +12,8 @@ from channels.auth import login
 
 from graphene_django.forms.mutation import DjangoModelFormMutation
 
+import copy
+
 from .models import Snippet  # From this tutorial
 from .types import SnippetType
 from .forms import SnippetForm
@@ -141,11 +143,14 @@ class DeleteSnippetMutation(graphene.Mutation):
     @staticmethod
     def mutate(self, info, id):
         snippet = Snippet.objects.get(pk=id)
+        snippet_clone = copy.copy(snippet)
         snippet.delete()
 
+        snippet_clone.id = id
+
         # Notify subscribers.
-        OnSnippetTransaction.snippet_event(broadcast_group="DELETE", sender="SENDER", snippet=None)
-        OnSnippetNoGroup.snippet_event(trans_type="DELETE", sender="SENDER", snippet=snippet)
+        OnSnippetTransaction.snippet_event(broadcast_group="DELETE", sender="SENDER", snippet=snippet_clone)
+        OnSnippetNoGroup.snippet_event(trans_type="DELETE", sender="SENDER", snippet=snippet_clone)
 
         # Notice we return an instance of this mutation
         return DeleteSnippetMutation(ok=True)
