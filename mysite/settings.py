@@ -47,6 +47,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # CORS, recommended that this come before anything else that generates responses
+    # https://www.stackhawk.com/blog/django-cors-guide/
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware', # CORS
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,8 +58,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # CORS
-    'django.middleware.common.CommonMiddleware', # CORS
 ]
 
 ROOT_URLCONF = 'mysite.urls'
