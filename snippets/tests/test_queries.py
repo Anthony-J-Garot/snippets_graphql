@@ -188,14 +188,16 @@ query qryByOwner {
 
         # Now authenticate
         payload = {
-            "username": "admin",
-            "password": "withscores4!"
+            "input": {
+                "username": "admin",
+                "password": "withscores4!"
+            }
         }
 
         response = self.query(
             '''
-mutation mutLogin($username: String!, $password: String!) {
-  login(username: $username, password: $password) {
+mutation mutLogin($input: LoginInput!) {
+  login(input: $input) {
     ok
   }
 }
@@ -214,7 +216,7 @@ mutation mutLogin($username: String!, $password: String!) {
         # Ensure OK
         self.assertTrue(
             content['data']['login']['ok'],
-            "Authentication should have occurred for username [{}]".format(payload['username'])
+            "Authentication should have occurred for username [{}]".format(payload['input']['username'])
         )
 
         response = self.query(
@@ -244,4 +246,4 @@ query qryByOwner {
 
         # How many rows returned?
         rowcount = len(content['data']['snippetsByOwner'])
-        self.assertEquals(2, rowcount, "User [{}] should own 2 rows".format(payload['username']))
+        self.assertEquals(2, rowcount, "User [{}] should own 2 rows".format(payload['input']['username']))

@@ -220,14 +220,16 @@ mutation deleteSnippet($id: ID!) {
         # Request ok back from mutation
 
         payload = {
-            "username": "admin",
-            "password": "withscores4!"
+            "input": {
+                "username": "admin",
+                "password": "withscores4!"
+            }
         }
 
         response = self.query(
             '''
-mutation mutLogin($username: String!, $password: String!) {
-  login(username: $username, password: $password) {
+mutation mutLogin($input: LoginInput!) {
+  login(input: $input) {
     ok
   }
 }
@@ -246,7 +248,7 @@ mutation mutLogin($username: String!, $password: String!) {
         # Ensure OK
         self.assertTrue(
             content['data']['login']['ok'],
-            "Authentication should have occurred for username [{}]".format(payload['username'])
+            "Authentication should have occurred for username [{}]".format(payload['input']['username'])
         )
 
         response = self.query(

@@ -31,6 +31,10 @@ class SnippetInput(graphene.InputObjectType):
     created = graphene.DateTime()
     private = graphene.Boolean()
 
+# Input arguments for authentication.
+class LoginInput(graphene.InputObjectType):
+    username = graphene.String()
+    password = graphene.String()
 
 # We can use a serializer to use Django CRUD or REST.
 # But since I don't have that created . . . .
@@ -167,13 +171,12 @@ class Login(graphene.Mutation, name="LoginPayload"):
     ok = graphene.Boolean(required=True)
 
     class Arguments:
-        username = graphene.String(required=True)
-        password = graphene.String(required=True)
+        input = LoginInput(required=True)
 
     @staticmethod
-    def mutate(self, info, username, password):
+    def mutate(self, info, input):
         # Ask Django to authenticate user.
-        user = django.contrib.auth.authenticate(username=username, password=password)
+        user = django.contrib.auth.authenticate(username=input.username, password=input.password)
         if user is None:
             return Login(ok=False)
 
