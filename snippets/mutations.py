@@ -159,7 +159,7 @@ class DeleteSnippetMutation(graphene.Mutation):
 # https://channels.readthedocs.io/en/stable/topics/authentication.html
 class Login(graphene.Mutation, name="LoginPayload"):
     """
-    Mutation that performs authentication.
+    Mutation that performs authenticatin.
 
     The user information is saved in the info.context and can be used
     to filter queries.

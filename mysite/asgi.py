@@ -9,12 +9,12 @@ from snippets.routing import websocket_urlpatterns
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
 django_asgi_app = get_asgi_application()
 
-# Now I can import channels related packages
+# Now import channels related packages
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-# NOTE: Please note `channels.auth.AuthMiddlewareStack` wrapper, for
-# more details about Channels authentication read:
+# NOTE: Please note the `channels.auth.AuthMiddlewareStack` wrapper to
+# [ AuthMiddleWare, SessionMiddleware, CookieMiddleware ].
 # https://channels.readthedocs.io/en/latest/topics/authentication.html
 application = channels.routing.ProtocolTypeRouter({
 
@@ -22,7 +22,7 @@ application = channels.routing.ProtocolTypeRouter({
     "http": django_asgi_app,
 
     # ws:// and wss://
-    # Wrapping in AllowedHostsOriginValidator uses the ALLOWED_HOSTS from settings
+    # Wrapping in AllowedHostsOriginValidator uses the ALLOWED_HOSTS from settings.
     # Auth is for authenticated user handling.
     # URLRouter sends the request along to the particular consumer.
     "websocket": AuthMiddlewareStack(
