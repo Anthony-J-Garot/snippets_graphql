@@ -78,7 +78,8 @@ mutation mutCreateSnippet($input: SnippetInput!) {
         payload = {
             "title": "This is a new snippet",
             "body": "Homer simpsons was here",
-            "private": True
+            "private": True,
+            "owner": "AnonymousUser"
         }
 
         # Here I request back only those items specified in the payload
@@ -91,6 +92,7 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
       title
       body
       private
+      owner
     }
     ok
   }

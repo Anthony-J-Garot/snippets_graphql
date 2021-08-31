@@ -2,6 +2,8 @@ import graphene
 from .models import Snippet  # From this tutorial
 from .types import SnippetType  # From this tutorial
 
+from django.db.models import Q
+
 from django.conf import settings
 
 
@@ -9,10 +11,42 @@ from django.conf import settings
 class Query(graphene.ObjectType):
     all_snippets = graphene.List(SnippetType)
 
-    # No filter; returns everything
     def resolve_all_snippets(self, info, **kwargs):
-        # print(vars(Snippet))
+        """
+Resolver to show all snippets, i.e. no filter.
+This is OK for an administrator but not for a regular user or AnonymousUser.
+        """
         return Snippet.objects.all()
+
+    # ---
+
+    limited_snippets = graphene.List(SnippetType)
+
+    def resolve_limited_snippets(self, info, **kwargs):
+        """
+Resolver to show snippets that the specified user can see.
+Rules:
+1. All users (including Anonymous) can see Public snippets.
+2. All users can see their own snippets regardless of Public/Private.
+        """
+
+        if settings.DEBUG:
+            print("LIMITED: You are currently user [{}]".format(info.context.user))
+
+        if info.context.user.is_authenticated:
+
+            if settings.DEBUG:
+                print("You are currently user [{}]".format(info.context.user))
+
+            if info.context.user.is_superuser:
+                print("Super user sees all")
+                return Snippet.objects.all()
+
+            # Otherwise, the user gets to see Public and their own records
+            return Snippet.objects.filter(Q(private=False) | Q(owner=info.context.user))
+        else:
+            print("AnonymousUser sees less")
+            return Snippet.objects.filter(private=False)
 
     # ---
 
@@ -30,7 +64,7 @@ class Query(graphene.ObjectType):
         """Resolver for filtering records by the owner of those records"""
 
         if settings.DEBUG:
-            print("You are currently user [{}]".format(info.context.user))
+            print("OWNER: You are currently user [{}]".format(info.context.user))
 
         if not info.context.user.is_authenticated:
             # AnonymousUser doesn't own squat
@@ -41,17 +75,23 @@ class Query(graphene.ObjectType):
             return Snippet.objects.filter(owner=info.context.user)
 
     def resolve_snippets_by_private(self, info):
-        """Resolver for filtering records by private flag"""
+        """
+Resolver for filtering records by private flag
+        """
 
         if settings.DEBUG:
-            print("You are currently user [{}]".format(info.context.user))
+            print("PRIVATE: You are currently user [{}]".format(info.context.user))
 
-        if not info.context.user.is_authenticated:
-            # AnonymousUser gets limited set
-            return Snippet.objects.filter(private=False)
+        if info.context.user.is_authenticated:
+            if info.context.user.is_superuser:
+                print("Super user sees all")
+                return Snippet.objects.filter(private=True)
+            else:
+                # Authenticated users sees their own
+                return Snippet.objects.filter(private=True, owner=info.context.user)
         else:
-            # Authenticated users get choice set
-            return Snippet.objects.filter(private=True)
+            # AnonymousUser gets nothing
+            return Snippet.objects.none()
 
     # ---
 

@@ -4,14 +4,39 @@
 
 {% block content %}
 
-<p>{{ view.title }}</p>
+    <p>{{ view.title }}</p>
 
-<ul>
-  {% for snippet in snippet_list %}
-    <li>
-      <a href="{% url 'snippets:detail' snippet.id %}">{{ snippet.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
+    <table id="tbl-snippets-list">
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>Title</td>
+            <td>Body preview</td>
+            <td>Owner</td>
+            <td>Private</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for snippet in snippet_list %}
+            <tr>
+                <td>
+                    {{ snippet.id }}
+                </td>
+                <td>
+                    <a href="{% url 'snippets:detail' snippet.id %}">{{ snippet.title }}</a>
+                </td>
+                <td>
+                    {{ snippet.body_preview }}
+                </td>
+                <td>
+                    {{ snippet.owner }}
+                </td>
+                <td>
+                    {{ snippet.private }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock content %}

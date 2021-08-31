@@ -3,7 +3,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$260000$RJZxFyOFf34dvWHXECkEjf$QcR7AUIAuyS0i25OB3aRxN8Y1hEffI6njZx6SfbT9R8=",
-        "last_login": "2021-08-02T14:59:09.586Z",
+        "last_login": "2021-08-31T15:22:52.860Z",
         "is_superuser": true,
         "username": "admin",
         "first_name": "",
@@ -20,7 +20,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$260000$U3MFGRnXiscdcQtBCwoeZI$m47dCWj5ngpEONpkfHMjS2Y9IXAlJmRG1mwFHH6/Zms=",
-        "last_login": "2021-07-30T22:27:15.224Z",
+        "last_login": "2021-08-31T14:47:07.578Z",
         "is_superuser": false,
         "username": "john.smith",
         "first_name": "John",
@@ -35,10 +35,34 @@
 },
 {
     "model": "sessions.session",
+    "pk": "02bq1g49j2k6yctdtylefd5dx77f13ih",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKoVT:g96PFdlgOJ0ryHRxGAIBh6N7Qr4bhQod6oqOdH3mUZg",
+        "expire_date": "2021-09-13T21:07:51.126Z"
+    }
+},
+{
+    "model": "sessions.session",
     "pk": "0nbta1tgjmjsnca3ag6pdpzwzowz2mgc",
     "fields": {
         "session_data": "e30:1m9CCT:CgMMA8njoHPUuBvqIQoXqJIOPuKTBHiEuVJ1ajf07Z0",
         "expire_date": "2021-08-12T20:00:13.555Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "3fu49o3s5p9g0sys71bpmz129t1uhv2a",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlTc:r43O-_pRLgcTf19J8RuPq7cCPiOU59jOx7pLNTTartU",
+        "expire_date": "2021-09-13T17:53:44.631Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "4r9w101o15svbyc7u1sxxl4u0ez6p6hb",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlM8:1YQUXZfmKHF_eJ6IkwhWxWiNLn1qd6j0yZw_fnEnETY",
+        "expire_date": "2021-09-13T17:46:00.180Z"
     }
 },
 {
@@ -51,10 +75,26 @@
 },
 {
     "model": "sessions.session",
+    "pk": "5xzk2ep6rni3u3luccftz6nb1rf80idw",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKkEy:YY1owUH7c5gvmMiYCHNltPYMp9Ybg9zVCrU3Y6dECGY",
+        "expire_date": "2021-09-13T16:34:32.221Z"
+    }
+},
+{
+    "model": "sessions.session",
     "pk": "6tbmfhu2o9eq42qnuu779tyqvkvk4cht",
     "fields": {
         "session_data": "e30:1m9CFP:-IXau3GH-lXuz8fmkTUae7-Q0B7-f5XiUOGukgFl7sE",
         "expire_date": "2021-08-12T20:03:15.933Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "8bfj7e7g4fxovkvp5qmshou09mkrn0ke",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKkwU:a6L-jhvbmSqLkuvd2UJGlmbaLOcWUTs2NbD9VGxLmPY",
+        "expire_date": "2021-09-13T17:19:30.825Z"
     }
 },
 {
@@ -67,10 +107,106 @@
 },
 {
     "model": "sessions.session",
+    "pk": "bq8yz7gmbjy10w7pqlo6m2scpsa6pa75",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlYE:WR5aqEsITYdeX0Zzz3df7HMjfIY41Q7P-pjGGb2iwns",
+        "expire_date": "2021-09-13T17:58:30.606Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "c8kgi75ygrlyhur7vnd6hgegvrw7l7ug",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mL5bA:n3OUqtCyYbE0OFBE-jyYHWKYmE1Diug3a0rRwvlTCds",
+        "expire_date": "2021-09-14T15:22:52.869Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "co8g5u39yvezyzdaltphgdetyalejd72",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKjdj:jTOTj7pdJEAHoBOsZJMxoQwoqhpP-9j5aQNDNZFZUic",
+        "expire_date": "2021-09-13T15:56:03.020Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "cvblii118zeo3p9y7po3oficrz93mxd8",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKkUm:7iYTq540vc-R5HbTJKFzTNATAU9ZLqkS58bbJYtP2Qw",
+        "expire_date": "2021-09-13T16:50:52.604Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "di9x79bcytviunnt5iqwoejhkzd9xoad",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKjZB:dtxdCv22n4oUF1tyw4PmXk7yRiwQtkx_9bAFBXI6Gwo",
+        "expire_date": "2021-09-13T15:51:21.997Z"
+    }
+},
+{
+    "model": "sessions.session",
     "pk": "ecy0r1gyul7hnkgotdrel0qh8s3usoo2",
     "fields": {
         "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mAZPJ:wuAPAxkG0c7LDRqmq46PHru5sFZr2hjN5yHVfProBvo",
         "expire_date": "2021-08-16T14:59:09.592Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "fna44shbp6ogwymqkos0kw3nexf4fugx",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKiKz:tiGqpSpraTYTw5IWjLwnMuowOIOZKVti-gPEKoqvs3E",
+        "expire_date": "2021-09-13T14:32:37.047Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "h31rcsg7hjq62s6st45w35w682egg580",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlBS:yQfkdwTgccyp4kQJRo7bcAKBTbYbv-FXqf--d5_3X0g",
+        "expire_date": "2021-09-13T17:34:58.943Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "i4gqfuuws22b1tokyylz25z1t84qhxg8",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKjF4:PuT8ZyuiuEeftXCboPfr82umIg95yF5BJjW0Az86p3Q",
+        "expire_date": "2021-09-13T15:30:34.234Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "n5jv72icu8vi9rljkoemxr9nnzvr8idz",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKk2k:3HE4hsWH_JR4y_xCp-nm0CrufV-lwLeB_sbBx5OfkhI",
+        "expire_date": "2021-09-13T16:21:54.971Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "ofbiweqn5fdu9iy13rhzu83tiz50oqlw",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlJY:ZjsCr4cCDxAf4NnO9-pjZa8TRZn-2B8Tl-8-mRhkRlY",
+        "expire_date": "2021-09-13T17:43:20.319Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "sftpuhrt7dar4dc3o718r04442yznd98",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlZM:4Q1I30uekpTRImWSI9kBwSweHQ_kECCXeYPTi6AY5UE",
+        "expire_date": "2021-09-13T17:59:40.425Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "sgxh418tc01shvctkupcvczisq54evvp",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKkvq:Toup2IkTS5uylc8aorhZjFYuicz8VYJyiZ5SF9gCa2U",
+        "expire_date": "2021-09-13T17:18:50.185Z"
     }
 },
 {
@@ -83,10 +219,34 @@
 },
 {
     "model": "sessions.session",
+    "pk": "tl849cj9v9bqjh99qtftsg15aicjf8iu",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKkp7:y0yXySqjNM5y0p1dQAHFqYCENwkk47BqVpfEx7w46P8",
+        "expire_date": "2021-09-13T17:11:53.398Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "vejiqvlikwyczo970y7lp8hou3dymmdo",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKlQ4:COak9vNbeBShrzCMD3pVf_ZnJDJ41t5BUOvLNQjNuAw",
+        "expire_date": "2021-09-13T17:50:04.371Z"
+    }
+},
+{
+    "model": "sessions.session",
     "pk": "vlun906n4ca2wlnvwg114l4sf47tw5dw",
     "fields": {
         "session_data": "e30:1m9BCt:D_SMBkIqKJHATV9-oiC49JmYoAAkBm2Q5zxu541EIsk",
         "expire_date": "2021-08-12T18:56:35.963Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "w4i61xcaxqv2m3o3wmpwsdeteerwvzqy",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKoDv:oBl_Hi1h3NbG-CptROr5fKsSh-SzQZXoaiku1pg9ra0",
+        "expire_date": "2021-09-13T20:49:43.848Z"
     }
 },
 {
@@ -104,10 +264,10 @@
     "model": "snippets.snippet",
     "pk": 2,
     "fields": {
-        "title": "Titles are for books",
-        "body": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "title": "Media Item #2",
+        "body": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\n\nThis shows a really long body. The body_preview or bodyPreview should truncate at a set # of chars.",
         "owner": "admin",
-        "private": false,
+        "private": true,
         "created": "2012-04-23T18:25:43.511Z"
     }
 },
@@ -115,7 +275,7 @@
     "model": "snippets.snippet",
     "pk": 3,
     "fields": {
-        "title": "Blog Entry #3",
+        "title": "Chick Corea Elektric Band",
         "body": "Chick Corea on the keyboards",
         "owner": "admin",
         "private": false,
@@ -142,6 +302,39 @@
         "owner": "tony.williams",
         "private": true,
         "created": "2021-07-16T18:36:50.206Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 7,
+    "fields": {
+        "title": "Miles Davis",
+        "body": "A Kind of Blue",
+        "owner": "admin",
+        "private": false,
+        "created": "2021-08-02T20:36:43.093Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 9,
+    "fields": {
+        "title": "Blue Oyster Cult",
+        "body": "Needs more cowbell\n...\n",
+        "owner": "Rudi the Rottweiler",
+        "private": false,
+        "created": "2021-08-02T22:56:39.839Z"
+    }
+},
+{
+    "model": "snippets.snippet",
+    "pk": 13,
+    "fields": {
+        "title": "Bluetech - Holotrope",
+        "body": "Holotrope: A Movement Towards Wholeness In 4 Parts.",
+        "owner": "john.smith",
+        "private": true,
+        "created": "2021-08-31T14:49:25.108Z"
     }
 },
 {

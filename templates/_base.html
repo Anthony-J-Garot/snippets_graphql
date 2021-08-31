@@ -26,22 +26,27 @@
     <div class="row">
         <div class="col-3 navigation">
             <p><a href="/">Home</a></p>
+            <p>Django stuff</p>
             <ul>
-                <li><a href="{% url 'snippets:all_list' %}">View - All snippets</a></li>
-                <li><a href="{% url 'snippets:public_list' %}">View - Public snippets</a></li>
+                <li><a href="{% url 'snippets:public_list' %}">View Public snippets</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'snippets:private_list' %}">View - Private snippets</a></li>
-                    <li><a href="{% url 'snippets:owner_list' %}">View - My snippets [{{ user }}'s]</a></li>
+                    <li><a href="{% url 'snippets:owner_list' %}">View My [{{ user }}'s] snippets</a></li>
+                    <li><a href="{% url 'snippets:private_list' %}">View My Private snippets</a></li>
                 {% endif %}
-                <li><a href="{% url 'snippets:subscription_all' %}" target="subscription">Snippets Real-time (subscription)</a></li>
+                <li><a href="{% url 'snippets:all_list' %}">View All snippets (Public + Mine)</a></li>
                 <li><a href="{% url 'snippets:create' %}">Create Snippet (Django form)</a></li>
-                <li><a href="http://192.168.2.99:3000/create_snippet/">Create Snippet (React form)</a></li>
                 <li><a href="/admin">Django Admin Functions</a></li>
+            </ul>
+            <p>GraphQL stuff</p>
+            <ul>
+                <li><a href="{% url 'snippets:subscription_all' %}" target="subscription">Snippets Feed
+                    (subscription)</a></li>
+                <li><a href="http://192.168.2.99:3000/create_snippet/">Create Snippet (React front-end)</a></li>
                 <li><a href="/graphql" target="graphiQL">GraphiQL playground</a></li>
             </ul>
 
             <!-- Always let me know who I am -->
-            <p>You are: [{{ user }}]<BR/>
+            <p>You are: [{{ user }}] {% if user.is_superuser %}SuperUser!{% endif %}<BR/>
                 {% if user.is_authenticated %}
                     <a href="{% url 'user:sign_out' %}">Sign out</a>
                 {% else %}

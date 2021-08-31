@@ -4,7 +4,8 @@ from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from django.urls import reverse
+
+from django.conf import settings
 
 from .forms import SnippetForm
 
@@ -14,25 +15,39 @@ from .forms import SnippetForm
 
 class SnippetListView(ListView):
     """
-    View a list of snippets.
+    View a list of snippets through ordinary (non-GraphQL) means.
     """
     model = Snippet
     template_name = 'snippets/snippet_list.html'
     title = 'Default'
 
     def get_queryset(self):
+
+        # The title comes from the urls page
         if self.title == 'Public Snippets':
             # Anyone can view all the Public
             return Snippet.objects.filter(private=False)
+
+        # "All Snippets" is a bit of a misnomer here. It should be "All Snippets
+        # This User Is Allowed To See"
         if self.title == 'All Snippets':
-            if self.request.user.is_superuser:
-                # SU can see anything
-                return Snippet.objects.all()
-            elif self.request.user.is_authenticated:
+
+            # An Authenticated user can see their own records + all public
+            if self.request.user.is_authenticated:
+
+                # Of course, SuperUser can see anything
+                if self.request.user.is_superuser:
+                    self.title = 'All Snippets Viewable By [SuperUser]'
+                    return Snippet.objects.all()
+
                 # Show all public and this owner's records
+                # This is done at the view level on the Django side, and maybe it ought not be.
+                self.title = 'All Snippets Viewable By [{}]'.format(self.request.user.username)
                 return Snippet.objects.filter(Q(private=False) | Q(owner=self.request.user.username))
             else:
-                # Not logged in? Can still see Public records
+                # AnonymousUser
+                # Can still see Public records . . .
+                self.title = 'All Snippets Viewable By [AnonymousUser]'
                 return Snippet.objects.filter(private=False)
 
 
@@ -90,11 +105,16 @@ class SnippetSubscriptionView(TemplateView):
 
 def create(request):
     """
-Primitive form handling function until I get things sorted.
+Primitive snippet create form handling function until I get things sorted.
 I might turn this into a class if that's possible for forms.
     """
 
     if request.method == "POST":
+
+        # import pudb;pu.db
+
+        if settings.DEBUG:
+            print("Owner is [{}]".format(request.user.username))
 
         # VALIDATE POST DATA
         # https://stackoverflow.com/questions/22210046/django-form-what-is-the-best-way-to-modify-posted-data-before-validating
@@ -110,7 +130,7 @@ I might turn this into a class if that's possible for forms.
             # The benefit of a redirect is that a reload doesn't insert another row into the DB.
             # To send a notification message, I'd have to do it in the URL queryString.
             # This could do it: https://realpython.com/django-redirects/#passing-parameters-with-redirects
-            return render(request, 'snippets/success.html', {'notice': 'Created just fine'})
+            return render(request, 'snippets/success.html', {'notice': 'Snippet successfully created'})
         else:
             # Errors are typically trapped on the front-end, but just in case
             # something falls through, like a required field that isn't on the
@@ -120,4 +140,3 @@ I might turn this into a class if that's possible for forms.
         form = SnippetForm()
 
     return render(request, 'snippets/create.html', {'form': form})
-

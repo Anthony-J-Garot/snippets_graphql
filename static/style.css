@@ -62,3 +62,12 @@ body {
 .fieldWrapper .errorlist ::marker {
     color: red;
 }
+
+table#tbl-snippets-list thead td {
+    font-weight: bold;
+}
+
+table#tbl-snippets-list td {
+    padding: 3px;
+    border: 1px solid yellowgreen;
+}

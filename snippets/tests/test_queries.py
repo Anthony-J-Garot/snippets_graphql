@@ -42,9 +42,11 @@ class SnippetsTestCase(GraphQLTestCase):
         print()
         print()
 
-    # ./runtests.sh test_queries test_snippets_query
-    def test_snippets_query(self):
-        """Test to returns all snippet records"""
+    # ./runtests.sh test_queries test_snippets_all
+    def test_snippets_all(self):
+        """
+Test to returns all snippet records in the fixtures DB.
+        """
 
         response = self.query(
             '''
@@ -74,7 +76,78 @@ query qryAllSnippets {
 
         # How many rows returned?
         rowcount = len(content['data']['allSnippets'])
-        self.assertEquals(5, rowcount, "Should have found 5 rows")
+        self.assertEquals(8, rowcount, "Should have found 8 rows")
+
+    # ./runtests.sh test_queries test_snippets_limited
+    def test_snippets_limited(self):
+        """
+Test to returns all limited set of snippet records based upon
+the logged in user.
+        """
+
+        # Now authenticate
+        payload = {
+            "input": {
+                "username": "john.smith",
+                "password": "withscores4!"
+            }
+        }
+
+        response = self.query(
+            '''
+mutation mutLogin($input: LoginInput!) {
+  login(input: $input) {
+    ok
+  }
+}
+            ''',
+            op_name='mutLogin',
+            variables=payload
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if you get errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        self.assertTrue(
+            content['data']['login']['ok'],
+            "Authentication should have occurred for username [{}]".format(payload['input']['username'])
+        )
+
+        response = self.query(
+            '''
+query qryLimitedSnippets {
+  limitedSnippets {
+    id
+    title
+    body
+    created
+    private
+    owner
+    __typename
+  }
+  __typename
+}
+            ''',
+            op_name='qryLimitedSnippets'
+        )
+
+        # Note: the content is returned in bytes, which we can easily convert to
+        # a dict containing json.
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if you get errors
+        self.assertResponseNoErrors(response)
+
+        # How many rows returned?
+        rowcount = len(content['data']['limitedSnippets'])
+        self.assertEquals(6, rowcount, "Should have found 6 rows")
 
     # ./runtests.sh test_queries test_snippets_by_id
     def test_snippets_by_id(self):
@@ -246,4 +319,4 @@ query qryByOwner {
 
         # How many rows returned?
         rowcount = len(content['data']['snippetsByOwner'])
-        self.assertEquals(2, rowcount, "User [{}] should own 2 rows".format(payload['input']['username']))
+        self.assertEquals(3, rowcount, "User [{}] should own 3 rows".format(payload['input']['username']))

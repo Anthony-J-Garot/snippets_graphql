@@ -80,6 +80,7 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
       title
       body
       private
+      owner
     }
     ok
   }
@@ -89,7 +90,8 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
   "input": {
     "title": "This is a new snippet",
     "body": "Homer simpsons was here",
-    "private": true
+    "private": true,
+    "owner": "AnonymousUser"
   }
 }
 

@@ -5,7 +5,7 @@
 #
 # To use the fixtures in unit tests, simply add to the top of the class:
 #		fixtures = ['fixtures.json',]
-# or whatever they're called.
+# or whatever the file is called.
 
 PYTHON=/usr/bin/python3
 PYTHON_ARGS=-Wa
