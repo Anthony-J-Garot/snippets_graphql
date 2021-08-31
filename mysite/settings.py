@@ -39,18 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'snippets', # My app in this project
+    'snippets',  # My app in this project
     'user',  # User management app in this project
     'graphene_django',  # ***
     'channels',  # Wasn't originally needed, but adding websockets
-    'corsheaders' # CORS - to allow React front-end on port 3000
+    'corsheaders'  # CORS - to allow React front-end on port 3000
 ]
 
 MIDDLEWARE = [
     # CORS, recommended that this come before anything else that generates responses
     # https://www.stackhawk.com/blog/django-cors-guide/
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware', # CORS
+    'django.middleware.common.CommonMiddleware',  # CORS
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,8 +67,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # This allows a project-based template for all apps
-        'DIRS': [ BASE_DIR / 'templates' ],
-        'APP_DIRS': True, # Ensure App is listed in INSTALLED_APPS
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,  # Ensure App is listed in INSTALLED_APPS
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -152,7 +152,10 @@ CHANNEL_LAYERS = {
 GRAPHENE = {
     # The path you configured in `routing.py`, including a leading slash.
     "SUBSCRIPTION_PATH": "/graphql/",
-    'MIDDLEWARE': []  # https://github.com/eamigo86/graphene-django-subscriptions/issues/7
+    # https://github.com/eamigo86/graphene-django-subscriptions/issues/7
+    'MIDDLEWARE': [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
 }
 
 # This is easy, but opens the server up to attack
@@ -162,3 +165,8 @@ GRAPHENE = {
 CORS_ORIGIN_WHITELIST = (
     'http://192.168.2.99:3000',
 )
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]

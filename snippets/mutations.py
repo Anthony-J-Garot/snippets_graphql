@@ -7,11 +7,10 @@ https://docs.graphene-python.org/en/latest/types/mutations/
 
 import django
 import graphene
+import graphql_jwt
 import asgiref
 from channels.auth import login
-
 from graphene_django.forms.mutation import DjangoModelFormMutation
-
 import copy
 
 from .models import Snippet  # From this tutorial
@@ -201,3 +200,6 @@ class Mutation(graphene.ObjectType):
     delete_snippet = DeleteSnippetMutation.Field()
     login = Login.Field()
     create_form_snippet = FormCreateSnippetMutation.Field()
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
