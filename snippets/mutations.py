@@ -13,8 +13,10 @@ from channels.auth import login
 from graphene_django.forms.mutation import DjangoModelFormMutation
 import copy
 
-from .models import Snippet  # From this tutorial
-from .types import SnippetType
+from django.contrib.auth import get_user_model
+
+from .models import Snippet
+from .types import SnippetType, UserType
 from .forms import SnippetForm
 
 from .subscriptions import OnSnippetTransaction  # one group name
@@ -30,10 +32,12 @@ class SnippetInput(graphene.InputObjectType):
     created = graphene.DateTime()
     private = graphene.Boolean()
 
+
 # Input arguments for authentication.
 class LoginInput(graphene.InputObjectType):
     username = graphene.String()
     password = graphene.String()
+
 
 # We can use a serializer to use Django CRUD or REST.
 # But since I don't have that created . . . .
@@ -194,12 +198,34 @@ class Login(graphene.Mutation, name="LoginPayload"):
         return Login(ok=True)
 
 
+# I can extend the JWT functionality by adding my own resolve.
+class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
+    user = graphene.Field(UserType)
+
+    @classmethod
+    def resolve(cls, root, info, **kwargs):
+        print("*** USER AUTHENTICATED - MY OWN TOKENAUTH ***")
+        return cls(user=info.context.user)
+
+
 class Mutation(graphene.ObjectType):
+    # Defined herein
     update_snippet = UpdateSnippetMutation.Field()
     create_snippet = CreateSnippetMutation.Field()
     delete_snippet = DeleteSnippetMutation.Field()
-    login = Login.Field()
+
+    # This uses Form fields rather than my own defined fields
     create_form_snippet = FormCreateSnippetMutation.Field()
-    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+
+    # This works well for the server side, but it's less useful for a
+    # separate React front end because no security information is passed
+    login = Login.Field()
+
+    # These come from JWT native
+    # https://buildmedia.readthedocs.org/media/pdf/django-graphql-jwt/stable/django-graphql-jwt.pdf
+    # token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+
+    # But I can use my own if I add a class and resolve. (see above)i
+    token_auth = ObtainJSONWebToken.Field()

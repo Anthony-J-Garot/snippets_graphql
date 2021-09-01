@@ -1,8 +1,7 @@
 import graphene
 from graphene_django.types import DjangoObjectType
+from django.contrib.auth import get_user_model
 from .models import Snippet  # From this tutorial
-import json
-
 
 # Define a type to bridge to graphene
 class SnippetType(DjangoObjectType):
@@ -28,3 +27,8 @@ class SnippetType(DjangoObjectType):
 
     def resolve_body_preview(self, info):
         return self.body_preview
+
+
+class UserType(DjangoObjectType):
+    class Meta:
+        model = get_user_model()

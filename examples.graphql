@@ -143,7 +143,24 @@ mutation updateSnippet {
 mutation {
   tokenAuth(username: "john.smith", password: "withscores4!") {
     token
+    payload
+    refreshExpiresIn
   }
+}
+
+# OR (Authentication using JWT)
+mutation mutSignonJWT($username: String!, $password: String!) {
+  tokenAuth(username: $username, password: $password) {
+    token
+    payload
+    refreshExpiresIn
+  }
+}
+
+# Payload
+{
+  "username": "john.smith",
+  "password": "withscores4!"
 }
 
 mutation {

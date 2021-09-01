@@ -1,16 +1,12 @@
 import graphene
-from graphene_django import DjangoObjectType
 
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from .models import Snippet  # From this tutorial
-from .types import SnippetType  # From this tutorial
+from .models import Snippet
+from .types import SnippetType,UserType
 
-class UserType(DjangoObjectType):
-    class Meta:
-        model = get_user_model()
 
 # https://docs.graphene-python.org/projects/django/en/latest/queries/
 class Query(graphene.ObjectType):
@@ -107,6 +103,7 @@ Resolver for filtering records by private flag
 
     # ---
 
+    # These go with JWT
     # https: // www.howtographql.com / graphql - python / 4 - authentication /
     me = graphene.Field(UserType)
     users = graphene.List(UserType)
