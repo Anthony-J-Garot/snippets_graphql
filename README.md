@@ -95,6 +95,21 @@ unittest. I will leave the original pytest tests around for posterity.
 Also because I may transition to pytest in the future. It looks to be
 a more robust testing platform.
 
+# Authentication
+
+## Tokenless GraphQL Mutation Login
+
+See the Login mutation.
+
+This works well enough, but didn't lend well to a React front-end.
+
+## authToken through JWT
+
+I set up the backend with [django-graphql-jwt](https://github.com/flavors/django-graphql-jwt).
+What this means on this React front-end is:
+
+1. Uses a mutation to request a token.
+2. Sends back the token through a header.
 
 # Useful links / resources
 
