@@ -3,6 +3,7 @@
 from graphene_django.utils.testing import GraphQLTestCase
 import json
 from django.conf import settings
+from . import authenticate_jwt, authenticate_tokenless
 
 # These two to trap stderr
 import sys
@@ -85,7 +86,6 @@ Test to returns all limited set of snippet records based upon
 the logged in user.
         """
 
-        # Now authenticate
         payload = {
             "input": {
                 "username": "john.smith",
@@ -93,30 +93,7 @@ the logged in user.
             }
         }
 
-        response = self.query(
-            '''
-mutation mutLogin($input: LoginInput!) {
-  login(input: $input) {
-    ok
-  }
-}
-            ''',
-            op_name='mutLogin',
-            variables=payload
-        )
-
-        content = json.loads(response.content)
-        if settings.DEBUG:
-            print(json.dumps(content, indent=4))
-
-        # This validates the status code and if you get errors
-        self.assertResponseNoErrors(response)
-
-        # Ensure OK
-        self.assertTrue(
-            content['data']['login']['ok'],
-            "Authentication should have occurred for username [{}]".format(payload['input']['username'])
-        )
+        authenticate_tokenless(self, payload)
 
         response = self.query(
             '''
@@ -267,30 +244,7 @@ query qryByOwner {
             }
         }
 
-        response = self.query(
-            '''
-mutation mutLogin($input: LoginInput!) {
-  login(input: $input) {
-    ok
-  }
-}
-            ''',
-            op_name='mutLogin',
-            variables=payload
-        )
-
-        content = json.loads(response.content)
-        if settings.DEBUG:
-            print(json.dumps(content, indent=4))
-
-        # This validates the status code and if you get errors
-        self.assertResponseNoErrors(response)
-
-        # Ensure OK
-        self.assertTrue(
-            content['data']['login']['ok'],
-            "Authentication should have occurred for username [{}]".format(payload['input']['username'])
-        )
+        authenticate_tokenless(self, payload)
 
         response = self.query(
             '''
@@ -320,3 +274,97 @@ query qryByOwner {
         # How many rows returned?
         rowcount = len(content['data']['snippetsByOwner'])
         self.assertEquals(3, rowcount, "User [{}] should own 3 rows".format(payload['input']['username']))
+
+    # ./runtests.sh test_queries test_token_auth_identify_user
+    def test_token_auth_identify_user(self):
+        """
+Tests 'whoami', i.e. the user associated with the passed auth token.
+        """
+
+        payload = {
+            "username": "john.smith",
+            "password": "withscores4!"
+        }
+
+        token = authenticate_jwt(self, payload)
+
+        # Identify this user. We have access to all the Django user fields.
+        # Note the headers!
+        response = self.query(
+            '''
+query qryIdentifyUser{
+  me {
+    id
+    username
+    lastLogin
+    email
+    isSuperuser
+  }
+}
+            ''',
+            op_name='qryIdentifyUser',
+            variables={},
+            headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if you get errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        # The count is dependent upon seed data in the fixtures
+        self.assertEquals(
+            payload['username'],
+            content['data']['me']['username'],
+            f"Username should have been [{payload['username']}]"
+        )
+
+    # ./runtests.sh test_queries test_token_auth_limited_query
+    def test_token_auth_limited_query(self):
+
+        payload = {
+            "username": "john.smith",
+            "password": "withscores4!"
+        }
+
+        token = authenticate_jwt(self, payload)
+
+        # Now see what this user can see.
+        # Note the headers!
+        response = self.query(
+            '''
+query qryLimitedSnippets {
+  limitedSnippets {
+    id
+    title
+    bodyPreview
+    owner
+    isPrivate: private
+    __typename
+  }
+  __typename
+}
+            ''',
+            op_name='qryLimitedSnippets',
+            variables={},
+            headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if you get errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        # The count is dependent upon seed data in the fixtures
+        EXPECTED_LIMITED_ROWCOUNT = 6
+        self.assertEquals(
+            EXPECTED_LIMITED_ROWCOUNT,
+            len(content['data']['limitedSnippets']),
+            "User should have access to [{}] records".format(EXPECTED_LIMITED_ROWCOUNT)
+        )

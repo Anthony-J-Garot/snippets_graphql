@@ -1,6 +1,7 @@
 from graphene_django.utils.testing import GraphQLTestCase  # This has some documentation embedded
 import json
 from django.conf import settings
+from . import authenticate_jwt
 
 
 # ./runtests.sh test_mutations
@@ -215,29 +216,26 @@ mutation deleteSnippet($id: ID!) {
             "Record should have been deleted"
         )
 
-    # ./runtests.sh test_mutations test_login_mutation
-    # For delete, remove row 1 and ensure row 2 is still around.
-    def test_login_mutation(self):
-        # Send in username/password
-        # Request ok back from mutation
+    # ./runtests.sh test_mutations test_verify_token
+    def test_verify_token(self):
 
         payload = {
-            "input": {
-                "username": "admin",
-                "password": "withscores4!"
-            }
+            "username": "john.smith",
+            "password": "withscores4!"
         }
+
+        token = authenticate_jwt(self, payload)
 
         response = self.query(
             '''
-mutation mutLogin($input: LoginInput!) {
-  login(input: $input) {
-    ok
-  }
-}
+            mutation mutVerifyJWT($token: String!) {
+              verifyToken(token: $token) {
+                payload
+              }
+            }
             ''',
-            op_name='mutLogin',
-            variables=payload
+            op_name='mutVerifyJWT',
+            variables={"token": token}
         )
 
         content = json.loads(response.content)
@@ -248,25 +246,8 @@ mutation mutLogin($input: LoginInput!) {
         self.assertResponseNoErrors(response)
 
         # Ensure OK
-        self.assertTrue(
-            content['data']['login']['ok'],
-            "Authentication should have occurred for username [{}]".format(payload['input']['username'])
+        self.assertEquals(
+            payload['username'],
+            content['data']['verifyToken']['payload']['username'],
+            "User should have been returned"
         )
-
-        response = self.query(
-            '''
-query remainingSnippets {
-  allSnippets {
-    id
-  }
-}
-            ''',
-            op_name='remainingSnippets'
-        )
-
-        content = json.loads(response.content)
-        if settings.DEBUG:
-            print(json.dumps(content, indent=4))
-
-        # This validates the status code and if you get errors
-        self.assertResponseNoErrors(response)

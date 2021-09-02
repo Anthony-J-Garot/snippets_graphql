@@ -16,6 +16,8 @@ class Query(graphene.ObjectType):
         """
 Resolver to show all snippets, i.e. no filter.
 This is OK for an administrator but not for a regular user or AnonymousUser.
+But while I am still testing and debugging, I want to be able to see a raw
+list regardless of who I am at the moment.
         """
         return Snippet.objects.all()
 
@@ -96,22 +98,25 @@ Resolver for filtering records by private flag
 
     # ---
 
-    extra_field = graphene.String()
-
-    def resolve_extra_field(self, info):
-        return "hello!"
-
-    # ---
-
     # These go with JWT
     # https: // www.howtographql.com / graphql - python / 4 - authentication /
     me = graphene.Field(UserType)
     users = graphene.List(UserType)
 
     def resolve_users(self, info):
+        """
+Returns all Django users.
+        """
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+
         return get_user_model().objects.all()
 
     def resolve_me(self, info):
+        """
+Returns all Django user information if s/he is logged in.
+        """
         user = info.context.user
         if user.is_anonymous:
             raise Exception('Not logged in!')
