@@ -10,8 +10,13 @@ import graphene
 import graphql_jwt
 import asgiref
 from channels.auth import login
+from django.http import HttpRequest
+import requests
 from graphene_django.forms.mutation import DjangoModelFormMutation
 import copy
+from django.conf import settings
+
+from mysite import schema
 
 from django.contrib.auth import get_user_model
 
@@ -88,12 +93,54 @@ coding the "save" action.
         # input_field_name = 'data'
         # return_field_name = 'my_pet'
 
-    def perform_mutate(form, info):
+    # Per the docs:
+    # Override this method to change how the form is saved or to return a different Graphene object type.
+    # https://docs.graphene-python.org/projects/django/en/latest/mutations/
+    def perform_mutate(form, info, *args):
         """
 Runs (perform the mutation) only if the form is valid.
+The owner is passed, but it is replaced with the authenticated username.
         """
 
-        snippet = form.instance  # shorthand to the model instance
+        # whoami?
+        query = '''
+mutation mutVerifyJWT($token: String!) {
+  verifyToken(token: $token) {
+    payload
+  }
+}
+'''
+
+        # The token comes in through the headers prefaced with JWT
+        auth_string = info.context.META['HTTP_AUTHORIZATION']
+        if auth_string.startswith('JWT'):
+            print(f"Splitting auth_string [{auth_string}]")
+            jwt, token = auth_string.split(' ')
+
+            # Pass the token back to get the authenticated username
+            result = schema.schema.execute(
+                query,
+                context=info.context,
+                variables={"token": token}
+            )
+            if settings.DEBUG:
+                print(f"Username from mutVerifyJWT [{result.data['verifyToken']['payload']['username']}]")
+                print(f"info.context.user object [{info.context.user}]")
+                print("")
+
+        # shorthand to the model instance.
+        # PyCharm complains, "Unresolved attribute reference 'instance' for class 'FormCreateSnippetMutation'",
+        # but you can see it in pudb.
+        # import pudb;pu.db
+        snippet = form.instance
+        # if settings.DEBUG:
+        #     print(f"Snippet (form instance) [{snippet}]")
+
+        # Now enforce our rule that the person logged in is the owner, not the passed
+        # value through the form. If no user was logged in, AnonymousUser will pass thru.
+        if settings.DEBUG:
+            print(f"Passed owner from form was [{form['owner'].data}]")
+            print(f"Forcing owner to [{info.context.user}]")
         snippet.owner = info.context.user  # Set by the API only; this is AnonymousUser when not authenticated
 
         # Various ways we can see all the things
@@ -101,6 +148,8 @@ Runs (perform the mutation) only if the form is valid.
         # print(form["private"].data)
         # print(form["body"].data)
         # print(form["owner"].data)
+        # And, of course, viewing the Variables in pudb:
+        # import pudb;pu.db
 
         snippet.save()  # Persist the data of this model instance
 

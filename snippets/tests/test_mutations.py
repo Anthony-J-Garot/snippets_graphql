@@ -74,16 +74,32 @@ mutation mutCreateSnippet($input: SnippetInput!) {
             "Variables should have passed through"
         )
 
-    # ./runtests.sh test_mutations test_form_snippet_create_mutation
-    def test_form_snippet_create_mutation(self):
-        payload = {
+    # This tests the "model form" version of create for an authenticated user.
+    #
+    # There is another test for the straight mutation based graphene create.
+    # Not sure if I find that either is better than the other.
+    # ./runtests.sh test_mutations test_model_form_authenticated_user_create_mutation
+    def test_model_form_authenticated_user_create_mutation(self):
+
+        # First we need a non-Anonymous user. Login using JWT authToken.
+        authentication_payload = {
+            "username": "john.smith",
+            "password": "withscores4!"
+        }
+
+        token = authenticate_jwt(self, authentication_payload)
+        print(f"User [{authentication_payload['username']}] authenticated with token [{token}]")
+
+        # NOTE! The owner passed-in is AnonymousUser. After creation, the owner
+        # should be john.smith.
+        snippet_payload = {
             "title": "This is a new snippet",
             "body": "Homer simpsons was here",
             "private": True,
             "owner": "AnonymousUser"
         }
 
-        # Here I request back only those items specified in the payload
+        # Here I request back only those items specified in the snippet_payload
         # for the ease of the unit test.
         response = self.query(
             '''
@@ -100,7 +116,8 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
 }
             ''',
             op_name='mutFormCreateSnippet',
-            variables={"input": payload}
+            variables={"input": snippet_payload},
+            headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
         )
 
         content = json.loads(response.content)
@@ -117,10 +134,10 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
         )
 
         # Ensure values passed through
-        self.assertEquals(
-            payload,
-            content['data']['createFormSnippet']['snippet'],
-            "Variables should have passed through"
+        self.assertNotEquals(
+            snippet_payload['owner'],
+            content['data']['createFormSnippet']['snippet']['owner'],
+            "The owner should not be AnonymousUser for this test"
         )
 
     # For update, let's change row 2's body to lorem ipsum.

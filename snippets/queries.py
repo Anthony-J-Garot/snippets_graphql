@@ -118,7 +118,12 @@ Returns all Django users.
 Returns all Django user information if s/he is logged in.
         """
         user = info.context.user
+
+        # Because this system allows for an AnonymousUser, just mention
+        # the user is not logged in. Do not raise an exception.
         if user.is_anonymous:
-            raise Exception('Not logged in!')
+            print('Not logged in!')
+            return None
+            # raise Exception('Not logged in!')
 
         return user
