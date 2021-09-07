@@ -112,8 +112,9 @@ mutation mutVerifyJWT($token: String!) {
 '''
 
         # The token comes in through the headers prefaced with JWT
+        username = info.context.user  # default value; could be AnonymousUser
         auth_string = info.context.META['HTTP_AUTHORIZATION']
-        if auth_string.startswith('JWT'):
+        if auth_string.startswith('JWT '):
             print(f"Splitting auth_string [{auth_string}]")
             jwt, token = auth_string.split(' ')
 
@@ -123,9 +124,10 @@ mutation mutVerifyJWT($token: String!) {
                 context=info.context,
                 variables={"token": token}
             )
+            username = result.data['verifyToken']['payload']['username']
             if settings.DEBUG:
-                print(f"Username from mutVerifyJWT [{result.data['verifyToken']['payload']['username']}]")
-                print(f"info.context.user object [{info.context.user}]")
+                print(f"Username from mutVerifyJWT [{username}]")
+                print(f"Username from info.context.user [{info.context.user}]")
                 print("")
 
         # shorthand to the model instance.
@@ -140,8 +142,8 @@ mutation mutVerifyJWT($token: String!) {
         # value through the form. If no user was logged in, AnonymousUser will pass thru.
         if settings.DEBUG:
             print(f"Passed owner from form was [{form['owner'].data}]")
-            print(f"Forcing owner to [{info.context.user}]")
-        snippet.owner = info.context.user  # Set by the API only; this is AnonymousUser when not authenticated
+            print(f"Forcing owner to [{username}]")
+        snippet.owner = username  # Set by the API only; this is AnonymousUser when not authenticated
 
         # Various ways we can see all the things
         # print(vars(form))
