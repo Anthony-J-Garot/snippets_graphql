@@ -10,8 +10,6 @@ import graphene
 import graphql_jwt
 import asgiref
 from channels.auth import login
-from django.http import HttpRequest
-import requests
 from graphene_django.forms.mutation import DjangoModelFormMutation
 import copy
 from django.conf import settings
@@ -20,6 +18,8 @@ from mysite import schema
 
 from django.contrib.auth import get_user_model
 
+# Project imports
+from . import VERIFY_JWT_TOKEN_MUTATION
 from .models import Snippet
 from .types import SnippetType, UserType
 from .forms import SnippetForm
@@ -102,33 +102,7 @@ Runs (perform the mutation) only if the form is valid.
 The owner is passed, but it is replaced with the authenticated username.
         """
 
-        # whoami?
-        query = '''
-mutation mutVerifyJWT($token: String!) {
-  verifyToken(token: $token) {
-    payload
-  }
-}
-'''
-
-        # The token comes in through the headers prefaced with JWT
-        username = info.context.user  # default value; could be AnonymousUser
-        auth_string = info.context.META['HTTP_AUTHORIZATION']
-        if auth_string.startswith('JWT '):
-            print(f"Splitting auth_string [{auth_string}]")
-            jwt, token = auth_string.split(' ')
-
-            # Pass the token back to get the authenticated username
-            result = schema.schema.execute(
-                query,
-                context=info.context,
-                variables={"token": token}
-            )
-            username = result.data['verifyToken']['payload']['username']
-            if settings.DEBUG:
-                print(f"Username from mutVerifyJWT [{username}]")
-                print(f"Username from info.context.user [{info.context.user}]")
-                print("")
+        username = FormCreateSnippetMutation.__whoami(info)
 
         # shorthand to the model instance.
         # PyCharm complains, "Unresolved attribute reference 'instance' for class 'FormCreateSnippetMutation'",
@@ -160,6 +134,36 @@ mutation mutVerifyJWT($token: String!) {
         OnSnippetNoGroup.snippet_event(trans_type="CREATE", sender="SENDER", snippet=snippet)
 
         return FormCreateSnippetMutation(snippet=snippet, ok=True)
+
+    @classmethod
+    def __whoami(cls, info):
+        """
+Determines who the user is based upon the passed header token.
+        """
+
+        # whoami?
+        query = VERIFY_JWT_TOKEN_MUTATION
+
+        # The token comes in through the headers prefaced with JWT
+        username = info.context.user  # default value; could be AnonymousUser
+        auth_string = info.context.META['HTTP_AUTHORIZATION']
+        if auth_string.startswith('JWT '):
+            print(f"Splitting auth_string [{auth_string}]")
+            jwt, token = auth_string.split(' ')
+
+            # Pass the token back to get the authenticated username
+            result = schema.schema.execute(
+                query,
+                context=info.context,
+                variables={"token": token}
+            )
+            username = result.data['verifyToken']['payload']['username']
+            if settings.DEBUG:
+                print(f"Username from mutVerifyJWT [{username}]")
+                print(f"Username from info.context.user [{info.context.user}]")
+                print("")
+
+        return username
 
 
 class UpdateSnippetMutation(graphene.Mutation):
