@@ -32,8 +32,8 @@ mutation mutVerifyJWT($token: String!) {
         )
         username = result.data['verifyToken']['payload']['username']
         if settings.DEBUG:
-            print(f"Username from mutVerifyJWT [{username}]")
-            print(f"Username from info.context.user [{info.context.user}]")
+            print(f"whoami(): Username from mutVerifyJWT [{username}]")
+            print(f"whoami(): Username from info.context.user [{info.context.user}]")
             print("")
 
     return username

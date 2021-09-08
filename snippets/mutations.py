@@ -227,7 +227,7 @@ class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
 
     @classmethod
     def resolve(cls, root, info, **kwargs):
-        print("*** USER AUTHENTICATED - MY OWN TOKENAUTH ***")
+        print(f"*** USER [{info.context.user}] AUTHENTICATED - MY OWN TOKENAUTH ***")
         return cls(user=info.context.user)
 
 
