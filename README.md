@@ -72,14 +72,25 @@ These are the steps:
 
 ## Subscriptions
 
-This is really the bread and butter of this example code.
+This was the bread and butter of this example code because I 
+could not find many online examples with fully functional code
+and unit tests.
 
 I scapeled code from the example in the
 [datadvance/ DjangoChannelsGraphqlWs](https://github.com/datadvance/DjangoChannelsGraphqlWs) 
 repo. He used pytest for his unit tests, which worked once I 
 figured out what I needed to make pytest run. However, I am
-more familiar with unittest; and my existing tests for queries
-and mutations were already in unittest.
+more familiar with unittest; and my existing graphene tests 
+for queries and mutations were already in unittest.
+
+**Note:** There are two separate subscriptions within the App:
+
+* OnSnippetTransaction (uses groups)
+* OnSnippetNoGroup (used primarily through this example)
+
+The first sends transactions to groups, and the second sends
+transactions to everyone. Throughout the testing and front-end 
+code, I used the no-group version because it was simpler.
 
 ## Unit Tests for Subscriptions
 
