@@ -1,8 +1,8 @@
 import graphene
 import channels
 import channels_graphql_ws
-from snippets.mutations import Mutation
-from snippets.subscriptions import Subscription
+
+from mysite.schema import Mutation, Subscription
 
 from django.conf import settings
 

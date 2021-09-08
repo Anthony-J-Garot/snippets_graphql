@@ -28,8 +28,7 @@ import channels_graphql_ws
 import channels_graphql_ws.testing
 from django.core.asgi import get_asgi_application
 
-from snippets.mutations import Mutation
-from snippets.subscriptions import Subscription
+from mysite.schema import Mutation, Subscription
 
 from django.core.management import call_command
 

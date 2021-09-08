@@ -11,8 +11,7 @@ import graphene
 
 from django.conf import settings
 
-from snippets.mutations import Mutation
-from snippets.subscriptions import Subscription
+from mysite.schema import Mutation, Subscription
 
 import asyncio
 

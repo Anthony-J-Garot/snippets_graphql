@@ -19,4 +19,5 @@ class Mutation(snippets_mutation):
 class Subscription(snippets_subscription):
     pass
 
+
 schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
