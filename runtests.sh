@@ -22,10 +22,11 @@ PYTHON_ARGS=
 #		--keepdb = don't destroy test DB when done
 #		--settings=path.to.settings
 #		--debug-mode = sets settings.DEBUG to True (as long as not overwritten in setUpClass())
+#		--debug-sql = dumps SQL transactions. Useful when relevant; otherwise, a lot of clutter.
 #		--reverse = run tests in reverse order
 #		-v [0-3] = verbose mode. I haven't seen much added benefit to this flag.
-MANAGE_OPTS="--debug-mode --debug-sql --reverse --failfast -v 2 --pdb"
-#MANAGE_OPTS="--reverse --failfast -v 2"
+#		--pdb = runs ipdb; doesn't work with --debug-sql for some reason ???
+MANAGE_OPTS="--debug-mode --reverse --failfast -v 2"
 
 if [[ "$1" == "" ]]; then
 	# All the things!
