@@ -1,7 +1,7 @@
 from graphene_django.utils.testing import GraphQLTestCase  # This has some documentation embedded
 import json
 from django.conf import settings
-from . import authenticate_jwt
+from . import authenticate_jwt, login_tokenless
 
 
 # ./runtests.sh test_mutations
@@ -30,49 +30,6 @@ class SnippetsTestCase(GraphQLTestCase):
     def setUp(self):
         print()
         print()
-
-    # ./runtests.sh test_mutations test_snippet_create_mutation
-    def test_snippet_create_mutation(self):
-        payload = {'title': 'food', 'body': 'BODY', 'private': False}
-
-        # Here I request back only those items specified in the payload
-        # for the ease of the unit test.
-        response = self.query(
-            '''
-mutation mutCreateSnippet($input: SnippetInput!) {
-  createSnippet(input: $input) {
-    snippet {
-      title
-      body
-      private
-    }
-    ok
-  }
-}
-            ''',
-            op_name='mutCreateSnippet',
-            variables={"input": payload}
-        )
-
-        content = json.loads(response.content)
-        if settings.DEBUG:
-            print(json.dumps(content, indent=4))
-
-        # This validates the status code and if you get errors
-        self.assertResponseNoErrors(response)
-
-        # Ensure OK
-        self.assertTrue(
-            content['data']['createSnippet']['ok'],
-            "Record should have been created"
-        )
-
-        # Ensure values passed through
-        self.assertEquals(
-            payload,
-            content['data']['createSnippet']['snippet'],
-            "Variables should have passed through"
-        )
 
     # This tests the "model form" version of create for an authenticated user.
     #
@@ -124,7 +81,7 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # Ensure OK
@@ -138,6 +95,121 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
             snippet_payload['owner'],
             content['data']['createFormSnippet']['snippet']['owner'],
             "The owner should not be AnonymousUser for this test"
+        )
+
+    # ./runtests.sh test_mutations test_login_mutation
+    def test_login_mutation(self):
+
+        # First test with valid user credentials
+        payload = {
+            "input": {
+                "username": "john.smith",
+                "password": "withscores4!"
+            }
+        }
+
+        is_valid = login_tokenless(self, payload)
+        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
+
+        # See what happens with invalid credentials
+        payload = {
+            "input": {
+                "username": "john.smith",
+                "password": "BAD PASSWD!"
+            }
+        }
+
+        is_valid = login_tokenless(self, payload)
+
+        # Ensure BAD
+        self.assertFalse(
+            is_valid,
+            "Authentication should NOT have occurred for username [{}]".format(payload['input']['username'])
+        )
+
+    # ./runtests.sh test_mutations test_logout_mutation
+    def test_logout_mutation(self):
+
+        # First test with valid user credentials
+        payload = {
+            "input": {
+                "username": "john.smith",
+                "password": "withscores4!"
+            }
+        }
+
+        is_valid = login_tokenless(self, payload)
+        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
+
+        # Now logout the user
+        response = self.query(
+            '''
+mutation mutLogout {
+  logout {
+    ok
+  }
+}
+            ''',
+            op_name='mutLogout',
+            variables={}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if there are errors
+        self.assertResponseNoErrors(response)
+
+        is_valid = content['data']['logout']['ok']
+        print(f"is_valid [{is_valid}]")
+
+        self.assertTrue(
+            is_valid,
+            "Username [{}] should have been logged out".format(payload['input']['username'])
+        )
+
+    # ./runtests.sh test_mutations test_snippet_create_mutation
+    def test_snippet_create_mutation(self):
+        payload = {'title': 'food', 'body': 'BODY', 'private': False}
+
+        # Here I request back only those items specified in the payload
+        # for the ease of the unit test.
+        response = self.query(
+            '''
+mutation mutCreateSnippet($input: SnippetInput!) {
+  createSnippet(input: $input) {
+    snippet {
+      title
+      body
+      private
+    }
+    ok
+  }
+}
+            ''',
+            op_name='mutCreateSnippet',
+            variables={"input": payload}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if there are errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        self.assertTrue(
+            content['data']['createSnippet']['ok'],
+            "Record should have been created"
+        )
+
+        # Ensure values passed through
+        self.assertEquals(
+            payload,
+            content['data']['createSnippet']['snippet'],
+            "Variables should have passed through"
         )
 
     # For update, let's change row 2's body to lorem ipsum.
@@ -174,7 +246,7 @@ mutation updateSnippet($id: ID!, $input: SnippetInput!) {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # Ensure I typed the alphabet correctly
@@ -224,7 +296,7 @@ mutation deleteSnippet($id: ID!) {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # Ensure OK
@@ -259,7 +331,7 @@ mutation deleteSnippet($id: ID!) {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # Ensure OK

@@ -3,7 +3,7 @@
 from graphene_django.utils.testing import GraphQLTestCase
 import json
 from django.conf import settings
-from . import authenticate_jwt, authenticate_tokenless
+from . import authenticate_jwt, login_tokenless
 
 # These two to trap stderr
 import sys
@@ -72,7 +72,7 @@ query qryAllSnippets {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # How many rows returned?
@@ -93,7 +93,8 @@ the logged in user.
             }
         }
 
-        authenticate_tokenless(self, payload)
+        is_valid = login_tokenless(self, payload)
+        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
 
         response = self.query(
             '''
@@ -119,7 +120,7 @@ query qryLimitedSnippets {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # How many rows returned?
@@ -154,7 +155,7 @@ query snippetById($id: String!) {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         id = content['data']['snippetById']['id']
@@ -229,7 +230,7 @@ query qryByOwner {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # How many rows returned?
@@ -244,7 +245,8 @@ query qryByOwner {
             }
         }
 
-        authenticate_tokenless(self, payload)
+        is_valid = login_tokenless(self, payload)
+        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
 
         response = self.query(
             '''
@@ -268,7 +270,7 @@ query qryByOwner {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # How many rows returned?
@@ -311,7 +313,7 @@ query qryIdentifyUser{
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # Ensure OK
@@ -357,7 +359,7 @@ query qryLimitedSnippets {
         if settings.DEBUG:
             print(json.dumps(content, indent=4))
 
-        # This validates the status code and if you get errors
+        # This validates the status code and if there are errors
         self.assertResponseNoErrors(response)
 
         # Ensure OK

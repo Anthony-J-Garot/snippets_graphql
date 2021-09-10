@@ -9,7 +9,7 @@ import django
 import graphene
 import graphql_jwt
 import asgiref
-from channels.auth import login
+from channels.auth import login, logout
 from graphene_django.forms.mutation import DjangoModelFormMutation
 import copy
 from django.conf import settings
@@ -189,7 +189,7 @@ class DeleteSnippetMutation(graphene.Mutation):
 # https://channels.readthedocs.io/en/stable/topics/authentication.html
 class Login(graphene.Mutation, name="LoginPayload"):
     """
-    Mutation that performs authenticatin.
+    Mutation that performs authentication.
 
     The user information is saved in the info.context and can be used
     to filter queries.
@@ -209,9 +209,10 @@ class Login(graphene.Mutation, name="LoginPayload"):
         # breakpoint()
 
         # Use Channels to login, in other words to put proper data to
-        # the session stored in the scope. The `info.context` is
-        # practically just a wrapper around Channel `self.scope`, but
-        # the `login` method requires dict, so use `_asdict`.
+        # the session stored in the scope.
+        # https://channels.readthedocs.io/en/stable/topics/authentication.html
+        # The `info.context` is practically just a wrapper around Channel
+        # `self.scope`, but the `login` method requires dict, so use `_asdict`.
         # asgiref.sync.async_to_sync(login)(info.context._asdict(), user)
         asgiref.sync.async_to_sync(login)(info.context.__dict__, user)
 
@@ -219,6 +220,24 @@ class Login(graphene.Mutation, name="LoginPayload"):
         info.context.session.save()
 
         return Login(ok=True)
+
+
+# https://docs.djangoproject.com/en/3.2/topics/auth/default/#how-to-log-a-user-out
+class Logout(graphene.Mutation):
+    """
+Graphene Mutation that performs logout functionality.
+The purpose of this is to be called from the front-end.
+    """
+    ok = graphene.Boolean(required=True)
+
+    @staticmethod
+    def mutate(self, info):
+        asgiref.sync.async_to_sync(logout)(info.context.__dict__)
+
+        # Save the session because `channels.auth.login` does not do this.
+        info.context.session.save()
+
+        return Logout(ok=True)
 
 
 # I can extend the JWT functionality by adding my own resolve.
@@ -243,6 +262,7 @@ class Mutation(graphene.ObjectType):
     # This works well for the server side, but it's less useful for a
     # separate React front end because no security information is passed
     login = Login.Field()
+    logout = Logout.Field()
 
     # These come from JWT native
     # https://buildmedia.readthedocs.org/media/pdf/django-graphql-jwt/stable/django-graphql-jwt.pdf
