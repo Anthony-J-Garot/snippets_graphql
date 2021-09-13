@@ -4,6 +4,7 @@ This mutation file sets up C.UD of CRUD for the snippets model.
 
 https://docs.graphene-python.org/en/latest/types/mutations/
 """
+import datetime
 
 import django
 import graphene
@@ -32,8 +33,8 @@ from .subscriptions import OnSnippetNoGroup  # no group names
 class SnippetInput(graphene.InputObjectType):
     title = graphene.String()
     body = graphene.String()
-    created = graphene.DateTime()
     private = graphene.Boolean()
+    created = graphene.DateTime(required=False, default=datetime.datetime.now().date())
 
 
 # Input arguments for authentication.
