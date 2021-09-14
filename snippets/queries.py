@@ -9,8 +9,7 @@ from .models import Snippet
 from .types import SnippetType, UserType
 
 
-# https://docs.graphene-python.org/projects/django/en/latest/queries/
-class Query(graphene.ObjectType):
+class AllSnippetsQuery(object):
     all_snippets = graphene.List(SnippetType)
 
     def resolve_all_snippets(self, info, **kwargs):
@@ -22,8 +21,8 @@ list regardless of who I am at the moment.
         """
         return Snippet.objects.all()
 
-    # ---
 
+class LimitedSnippetsQuery(object):
     limited_snippets = graphene.List(SnippetType)
 
     def resolve_limited_snippets(self, info, **kwargs):
@@ -61,8 +60,8 @@ Rules:
             print("AnonymousUser sees less")
             return Snippet.objects.filter(private=False)
 
-    # ---
 
+class SnippetByIdQuery(object):
     # I think this needs to be a String because Django models dictate so.
     snippet_by_id = graphene.Field(SnippetType, id=graphene.String())
 
@@ -70,7 +69,8 @@ Rules:
         """Resolver to get a record by a particular ID"""
         return Snippet.objects.get(pk=id)
 
-    # ---
+
+class SnippetsByOwnerQuery(object):
     snippets_by_owner = graphene.List(SnippetType)
 
     def resolve_snippets_by_owner(self, info):
@@ -87,6 +87,8 @@ Rules:
             # Authenticated users get set of the records they own
             return Snippet.objects.filter(owner=info.context.user)
 
+
+class SnippetsByPrivateQuery(object):
     def resolve_snippets_by_private(self, info):
         """
 Resolver for filtering records by private flag
@@ -106,10 +108,10 @@ Resolver for filtering records by private flag
             # AnonymousUser gets nothing
             return Snippet.objects.none()
 
-    # ---
 
-    # These go with JWT
-    # https: // www.howtographql.com / graphql - python / 4 - authentication /
+class UsersQuery(object):
+    # Goes with JWT
+    # https://www.howtographql.com/graphql-python/4-authentication/
     me = graphene.Field(UserType)
     users = graphene.List(UserType)
 
@@ -123,6 +125,11 @@ Returns all Django users.
 
         return get_user_model().objects.all()
 
+
+class MeQuery(object):
+    # Goes with JWT
+    # https://www.howtographql.com/graphql-python/4-authentication/
+
     def resolve_me(self, info):
         """
 Returns all Django user information if s/he is logged in.
@@ -134,6 +141,18 @@ Returns all Django user information if s/he is logged in.
         if user.is_anonymous:
             print('Not logged in!')
             return None
-            # raise Exception('Not logged in!')
 
         return user
+
+
+# https://docs.graphene-python.org/projects/django/en/latest/queries/
+# https://github.com/graphql-python/graphene/issues/714#issuecomment-385725909
+class Query(AllSnippetsQuery,
+            LimitedSnippetsQuery,
+            SnippetByIdQuery,
+            SnippetsByOwnerQuery,
+            SnippetsByPrivateQuery,
+            UsersQuery,
+            MeQuery,
+            graphene.ObjectType):
+    pass
