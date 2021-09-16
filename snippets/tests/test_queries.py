@@ -3,7 +3,7 @@
 from graphene_django.utils.testing import GraphQLTestCase
 import json
 from django.conf import settings
-from . import authenticate_jwt, login_tokenless
+from . import authenticate_jwt
 
 # These two to trap stderr
 import sys
@@ -57,7 +57,7 @@ query qryAllSnippets {
     body
     created
     private
-    owner
+    user { id, username, email }
     __typename
   }
   __typename
@@ -87,14 +87,11 @@ the logged in user.
         """
 
         payload = {
-            "input": {
-                "username": "john.smith",
-                "password": "withscores4!"
-            }
+            "username": "john.smith",
+            "password": "withscores4!"
         }
 
-        is_valid = login_tokenless(self, payload)
-        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
+        token = authenticate_jwt(self, payload)
 
         response = self.query(
             '''
@@ -105,13 +102,14 @@ query qryLimitedSnippets {
     body
     created
     private
-    owner
+    user { id, username, email }
     __typename
   }
   __typename
 }
             ''',
-            op_name='qryLimitedSnippets'
+            op_name='qryLimitedSnippets',
+            headers = {"HTTP_AUTHORIZATION": f"JWT {token}"}
         )
 
         # Note: the content is returned in bytes, which we can easily convert to
@@ -141,7 +139,7 @@ query snippetById($id: String!) {
     title
     body
     private
-    owner
+    user { id, username, email }
     created
     __typename
   }
@@ -182,7 +180,7 @@ query snippetById($id: String!) {
     title
     body
     private
-    owner
+    user { id, username, email }
     created
     __typename
   }
@@ -205,7 +203,9 @@ query snippetById($id: String!) {
 
     # ./runtests.sh test_queries test_snippets_by_owner
     def test_snippets_by_owner(self):
-        """Tests that records are returned for an authenticated user name that matches owner field in the DB."""
+        """
+Tests that records are returned for an authenticated user name that matches user field in the DB.
+        """
 
         # First try the unauthenticated user
         response = self.query(
@@ -215,7 +215,7 @@ query qryByOwner {
     id
     body
     private
-    owner
+    user { id, username, email }
     created
     __typename
   }
@@ -237,16 +237,12 @@ query qryByOwner {
         rowcount = len(content['data']['snippetsByOwner'])
         self.assertEquals(0, rowcount, "Should have found 0 rows")
 
-        # Now authenticate
         payload = {
-            "input": {
-                "username": "admin",
-                "password": "withscores4!"
-            }
+            "username": "john.smith",
+            "password": "withscores4!"
         }
 
-        is_valid = login_tokenless(self, payload)
-        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
+        token = authenticate_jwt(self, payload)
 
         response = self.query(
             '''
@@ -255,13 +251,14 @@ query qryByOwner {
     id
     body
     private
-    owner
+    user { id, username, email }
     created
     __typename
   }
 }
             ''',
-            op_name='qryByOwner'
+            op_name='qryByOwner',
+            headers = {"HTTP_AUTHORIZATION": f"JWT {token}"}
         )
 
         # Note: the content is returned in bytes, which we can easily convert to
@@ -275,7 +272,7 @@ query qryByOwner {
 
         # How many rows returned?
         rowcount = len(content['data']['snippetsByOwner'])
-        self.assertEquals(3, rowcount, "User [{}] should own 3 rows".format(payload['input']['username']))
+        self.assertEquals(3, rowcount, f"User [{payload['username']}] should own 3 rows")
 
     # ./runtests.sh test_queries test_token_auth_identify_user
     def test_token_auth_identify_user(self):
@@ -344,6 +341,7 @@ query qryLimitedSnippets {
     title
     bodyPreview
     owner
+    user { id, username, email }
     isPrivate: private
     __typename
   }

@@ -66,38 +66,3 @@ mutation mutSignonJWT($username: String!, $password: String!) {
 
     # The token is what we're after
     return content['data']['tokenAuth']['token']
-
-
-# This is actually a unit test, but it is used by other unit tests
-# to authenticate the user.
-def login_tokenless(cls, payload):
-    """
-Uses a mutation to request Django authentication.
-Input: payload of username & password. *
-Returns: true = authenticated; false = not authenticated
-
-* Slightly different from that of payload for JWT.
-    """
-    response = cls.query(
-        '''
-mutation mutLogin($input: LoginInput!) {
-  login(input: $input) {
-    ok
-  }
-}
-        ''',
-        op_name='mutLogin',
-        variables=payload
-    )
-
-    content = json.loads(response.content)
-    if settings.DEBUG:
-        print(json.dumps(content, indent=4))
-
-    # This validates the status code and if there are errors
-    cls.assertResponseNoErrors(response)
-
-    is_valid = content['data']['login']['ok']
-    # print(f"is_valid [{is_valid}]")
-
-    return is_valid

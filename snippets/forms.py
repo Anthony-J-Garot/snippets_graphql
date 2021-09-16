@@ -6,7 +6,7 @@ from .models import Snippet
 class SnippetForm(ModelForm):
     class Meta:
         model = Snippet
-        # fields = ['title', 'body', 'private', 'owner']
+        # fields = ['title', 'body', 'private', 'user_id']
 
         # I had excluded 'owner' because this is superfluous for the GraphQL
         # mutation; however, it needed to be around for the Django form or

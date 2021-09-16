@@ -114,7 +114,7 @@ subscription subNoGroup {
                 "query":
                     '''
 mutation mutUpdateSnippet {
-  updateSnippet(id: "2", input: {
+  updateSnippet(id: "1", input: {
         title: "Updated Title",
         body: "Homer simpson has left the building",
         private: false
@@ -156,6 +156,9 @@ mutation mutUpdateSnippet {
         )
 
         await client.finalize()
+        if client.connected:
+            print("Hey now! The client should be disconnected!!")
+        print("unit test done\n")
 
     # ./runtests.sh test_subscriptions test_snippet_create_subscription_alternate
     #
@@ -263,6 +266,9 @@ mutation mutUpdateSnippet {
             )
 
             await client.finalize()
+            if client.connected:
+                print("Hey now! The client should be disconnected!!")
+            print("unit test done\n")
 
         # Run the async test
         event_loop.run_until_complete(run_test())
@@ -316,7 +322,7 @@ subscription subNoGroup {
                 "query":
                     '''
 mutation mutUpdateSnippet {
-  updateSnippet(id: "2", input: {
+  updateSnippet(id: "3", input: {
         title: "Updated Title",
         body: "Homer simpson has left the building",
         private: false
@@ -356,6 +362,9 @@ mutation mutUpdateSnippet {
         )
 
         await client.finalize()
+        if client.connected:
+            print("Hey now! The client should be disconnected!!")
+        print("unit test done\n")
 
     # ./runtests.sh test_subscriptions test_custom_confirmation_message
     async def test_custom_confirmation_message(self):
@@ -427,7 +436,7 @@ subscription subNoGroup {
                 "query":
                     '''
 mutation mutUpdateSnippet {
-  updateSnippet(id: "2", input: {
+  updateSnippet(id: "4", input: {
         title: "Updated Title",
         body: "Homer simpson has left the building",
         private: false
@@ -467,6 +476,9 @@ mutation mutUpdateSnippet {
         )
 
         await client.finalize()
+        if client.connected:
+            print("Hey now! The client should be disconnected!!")
+        print("unit test done\n")
 
 
 # gql originally came from conftest.py, a pytest thing, which contains
@@ -580,6 +592,7 @@ def gql(db):
 
     # Assert all issued client are properly finalized.
     for client in reversed(issued_clients):
+        print("YYYYYYYYZ> Ensuring client is closed")
         assert (
             not client.connected
         ), f"Test has left connected client: !"

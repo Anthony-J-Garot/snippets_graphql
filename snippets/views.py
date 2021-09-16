@@ -43,7 +43,7 @@ class SnippetListView(ListView):
                 # Show all public and this owner's records
                 # This is done at the view level on the Django side, and maybe it ought not be.
                 self.title = 'All Snippets Viewable By [{}]'.format(self.request.user.username)
-                return Snippet.objects.filter(Q(private=False) | Q(owner=self.request.user.username))
+                return Snippet.objects.filter(Q(private=False) | Q(user_id=self.request.user.id))
             else:
                 # AnonymousUser
                 # Can still see Public records . . .
@@ -68,9 +68,9 @@ class SnippetAuthenticatedListView(LoginRequiredMixin, ListView):
             if self.request.user.is_superuser:
                 return Snippet.objects.filter(private=True)
             else:
-                return Snippet.objects.filter(owner=self.request.user.username, private=True)
+                return Snippet.objects.filter(user_id=self.request.user.id, private=True)
         if self.title == 'Owner Snippets':
-            return Snippet.objects.filter(owner=self.request.user.username)
+            return Snippet.objects.filter(user_id=self.request.user.id)
 
 
 # Can't require a login because some are visible to public.

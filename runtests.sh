@@ -26,7 +26,7 @@ PYTHON_ARGS=
 #		--reverse = run tests in reverse order
 #		-v [0-3] = verbose mode. I haven't seen much added benefit to this flag.
 #		--pdb = runs ipdb; doesn't work with --debug-sql for some reason ???
-MANAGE_OPTS="--debug-mode --reverse --failfast -v 2"
+MANAGE_OPTS="--keepdb --debug-mode --reverse --failfast -v 2"
 
 if [[ "$1" == "" ]]; then
 	# All the things!

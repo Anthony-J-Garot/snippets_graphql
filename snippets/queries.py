@@ -34,13 +34,14 @@ Rules:
         """
 
         # See who I am based upon the web token
-        jwt_username = str(whoami(info))
+        jwt_user = whoami(info)
         username = str(info.context.user)
-        if jwt_username != username:
-            # Different usernames? Shouldn't be.
-            print(f"LIMITED: whoami [{jwt_username}] != [{username}]")
+        user_id = info.context.user.id
+        if jwt_user.id != user_id:
+            # Different users? Shouldn't be.
+            print(f"LIMITED: whoami . . . {jwt_user.username}({jwt_user.id} != {username}({user_id})")
             return Snippet.objects.filter(private=False)
-        elif jwt_username == 'AnonymousUser':
+        elif jwt_user.username == 'AnonymousUser':
             # Same, but anonymous
             print(f"LIMITED: Confirmed to be AnonymousUser")
             return Snippet.objects.filter(private=False)
@@ -55,7 +56,7 @@ Rules:
                 return Snippet.objects.all()
 
             # Otherwise, the user gets to see Public and their own records
-            return Snippet.objects.filter(Q(private=False) | Q(owner=username))
+            return Snippet.objects.filter(Q(private=False) | Q(user_id=user_id))
         else:
             print("AnonymousUser sees less")
             return Snippet.objects.filter(private=False)
@@ -85,7 +86,7 @@ class SnippetsByOwnerQuery(object):
             return Snippet.objects.none()
         else:
             # Authenticated users get set of the records they own
-            return Snippet.objects.filter(owner=info.context.user)
+            return Snippet.objects.filter(user_id=info.context.user.id)
 
 
 class SnippetsByPrivateQuery(object):
@@ -103,7 +104,7 @@ Resolver for filtering records by private flag
                 return Snippet.objects.filter(private=True)
             else:
                 # Authenticated users sees their own
-                return Snippet.objects.filter(private=True, owner=info.context.user)
+                return Snippet.objects.filter(private=True, user_id=info.context.user.id)
         else:
             # AnonymousUser gets nothing
             return Snippet.objects.none()

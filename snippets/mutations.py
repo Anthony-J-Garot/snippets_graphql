@@ -37,12 +37,6 @@ class SnippetInput(graphene.InputObjectType):
     created = graphene.DateTime(required=False, default=datetime.datetime.now().date())
 
 
-# Input arguments for authentication.
-class LoginInput(graphene.InputObjectType):
-    username = graphene.String()
-    password = graphene.String()
-
-
 # We can use a serializer to use Django CRUD or REST.
 # But since I don't have that created . . . .
 class CreateSnippetMutation(graphene.Mutation):
@@ -61,7 +55,7 @@ class CreateSnippetMutation(graphene.Mutation):
         snippet.title = input['title']
         snippet.body = input['body']
         snippet.private = input['private']
-        snippet.owner = info.context.user.username  # Set by the API only
+        snippet.user_id = info.context.user.id  # Set by the API only
         snippet.save()
 
         # print(vars(snippet))
@@ -98,10 +92,11 @@ coding the "save" action.
     def perform_mutate(form, info, *args):
         """
 Runs (perform the mutation) only if the form is valid.
-The owner is passed, but it is replaced with the authenticated username.
+The username may be passed by the form, but it is replaced with the authenticated username.
         """
 
-        username = whoami(info)
+        user = whoami(info)
+        print(f"whoami returned user_id [{user.id}] and username [{user.username}]")
 
         # shorthand to the model instance.
         # PyCharm complains, "Unresolved attribute reference 'instance' for class 'FormCreateSnippetMutation'",
@@ -114,15 +109,14 @@ The owner is passed, but it is replaced with the authenticated username.
         # Now enforce our rule that the person logged in is the owner, not the passed
         # value through the form. If no user was logged in, AnonymousUser will pass thru.
         if settings.DEBUG:
-            print(f"Passed owner from form was [{form['owner'].data}]")
-            print(f"Forcing owner to [{username}]")
-        snippet.owner = username  # Set by the API only; this is AnonymousUser when not authenticated
+            print(f"Passed owner from form was [{form['user'].data}]")
+            print(f"Forcing owner to [{user.username}]")
+        snippet.user = user  # Set by the API only; this is AnonymousUser when not authenticated
 
         # Various ways we can see all the things
         # print(vars(form))
         # print(form["private"].data)
         # print(form["body"].data)
-        # print(form["owner"].data)
         # And, of course, viewing the Variables in pudb:
         # import pudb;pu.db
 
@@ -187,35 +181,8 @@ class DeleteSnippetMutation(graphene.Mutation):
         return DeleteSnippetMutation(ok=True)
 
 
-# https://channels.readthedocs.io/en/stable/topics/authentication.html
-class Login(graphene.Mutation, name="LoginPayload"):
-    """
-    Mutation that performs authentication.
 
-    The user information is saved in the info.context and can be used
-    to filter queries.
-    """
-    ok = graphene.Boolean(required=True)
 
-    class Arguments:
-        input = LoginInput(required=True)
-
-    @staticmethod
-    def mutate(self, info, input):
-        # Ask Django to authenticate user.
-        user = django.contrib.auth.authenticate(username=input.username, password=input.password)
-        if user is None:
-            return Login(ok=False)
-
-        # breakpoint()
-
-        # Use Channels to login, in other words to put proper data to
-        # the session stored in the scope.
-        # https://channels.readthedocs.io/en/stable/topics/authentication.html
-        # The `info.context` is practically just a wrapper around Channel
-        # `self.scope`, but the `login` method requires dict, so use `_asdict`.
-        # asgiref.sync.async_to_sync(login)(info.context._asdict(), user)
-        asgiref.sync.async_to_sync(login)(info.context.__dict__, user)
 
         # Save the session because `channels.auth.login` does not do this.
         info.context.session.save()
@@ -260,14 +227,14 @@ class Mutation(graphene.ObjectType):
     # This uses Form fields rather than my own defined fields
     create_form_snippet = FormCreateSnippetMutation.Field()
 
-    # This works well for the server side, but it's less useful for a
-    # separate React front end because no security information is passed
-    login = Login.Field()
     logout = Logout.Field()
 
     # These come from JWT native
     # https://buildmedia.readthedocs.org/media/pdf/django-graphql-jwt/stable/django-graphql-jwt.pdf
     # token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    # Can change the returned payload from verify_token
+    # https://stackoverflow.com/questions/63091242/graphql-jwt-change-payload-of-verifytoken-mutation-django
+
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
 

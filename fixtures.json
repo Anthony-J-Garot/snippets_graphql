@@ -20,7 +20,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$260000$U3MFGRnXiscdcQtBCwoeZI$m47dCWj5ngpEONpkfHMjS2Y9IXAlJmRG1mwFHH6/Zms=",
-        "last_login": "2021-08-31T14:47:07.578Z",
+        "last_login": "2021-08-31T15:27:05.359Z",
         "is_superuser": false,
         "username": "john.smith",
         "first_name": "John",
@@ -115,14 +115,6 @@
 },
 {
     "model": "sessions.session",
-    "pk": "c8kgi75ygrlyhur7vnd6hgegvrw7l7ug",
-    "fields": {
-        "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mL5bA:n3OUqtCyYbE0OFBE-jyYHWKYmE1Diug3a0rRwvlTCds",
-        "expire_date": "2021-09-14T15:22:52.869Z"
-    }
-},
-{
-    "model": "sessions.session",
     "pk": "co8g5u39yvezyzdaltphgdetyalejd72",
     "fields": {
         "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKjdj:jTOTj7pdJEAHoBOsZJMxoQwoqhpP-9j5aQNDNZFZUic",
@@ -159,6 +151,14 @@
     "fields": {
         "session_data": ".eJxVjEEOwiAQRe_C2pABSktduvcMZIZhpGpoUtqV8e7apAvd_vfef6mI21ri1vISJ1ZnZdTpdyNMj1x3wHest1mnua7LRHpX9EGbvs6cn5fD_Tso2Mq3dtBZIcBewHqRDmiQPJIz4kDYQJ8zjEBMDk3wBgm8uCGxsynYIEa9P-maOA0:1mKiKz:tiGqpSpraTYTw5IWjLwnMuowOIOZKVti-gPEKoqvs3E",
         "expire_date": "2021-09-13T14:32:37.047Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "gapj37yakmghhbrj00e3a56421n1mnx5",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAQRO_iGlm2409CSZ8zWLvrDQ4gR4qTCnF3HCkFFNPMezNvEWHfctwrr3FO4iqMuPx2CPTkcoD0gHJfJC1lW2eUhyJPWuW4JH7dTvfvIEPNba3JuA5pUqwoGBUAerAd-MkG5RACKO97PbCxgyYwyJ5aHHuNKTVNfL7noTh3:1mL5fF:LJ-j9NahNGl6K1u1AoOCfMW8U9v6a53WGZqn8hgUIn4",
+        "expire_date": "2021-09-14T15:27:05.366Z"
     }
 },
 {
@@ -255,7 +255,9 @@
     "fields": {
         "title": "Media Item #1",
         "body": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "owner": "john.smith",
+        "user": [
+            "john.smith"
+        ],
         "private": true,
         "created": "2018-06-13T08:02:21.517Z"
     }
@@ -266,7 +268,9 @@
     "fields": {
         "title": "Media Item #2",
         "body": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\n\nThis shows a really long body. The body_preview or bodyPreview should truncate at a set # of chars.",
-        "owner": "admin",
+        "user": [
+            "admin"
+        ],
         "private": true,
         "created": "2012-04-23T18:25:43.511Z"
     }
@@ -277,7 +281,9 @@
     "fields": {
         "title": "Chick Corea Elektric Band",
         "body": "Chick Corea on the keyboards",
-        "owner": "admin",
+        "user": [
+            "admin"
+        ],
         "private": false,
         "created": "2021-07-16T18:36:50.206Z"
     }
@@ -288,7 +294,9 @@
     "fields": {
         "title": "Musical Item #4",
         "body": "Herbie Hancock",
-        "owner": "john.smith",
+        "user": [
+            "john.smith"
+        ],
         "private": false,
         "created": "2021-07-16T18:36:50.206Z"
     }
@@ -299,7 +307,7 @@
     "fields": {
         "title": "News Item #5",
         "body": "Tony Williams Lifetime",
-        "owner": "tony.williams",
+        "user": null,
         "private": true,
         "created": "2021-07-16T18:36:50.206Z"
     }
@@ -310,7 +318,9 @@
     "fields": {
         "title": "Miles Davis",
         "body": "A Kind of Blue",
-        "owner": "admin",
+        "user": [
+            "admin"
+        ],
         "private": false,
         "created": "2021-08-02T20:36:43.093Z"
     }
@@ -321,7 +331,7 @@
     "fields": {
         "title": "Blue Oyster Cult",
         "body": "Needs more cowbell\n...\n",
-        "owner": "Rudi the Rottweiler",
+        "user": null,
         "private": false,
         "created": "2021-08-02T22:56:39.839Z"
     }
@@ -332,7 +342,9 @@
     "fields": {
         "title": "Bluetech - Holotrope",
         "body": "Holotrope: A Movement Towards Wholeness In 4 Parts.",
-        "owner": "john.smith",
+        "user": [
+            "john.smith"
+        ],
         "private": true,
         "created": "2021-08-31T14:49:25.108Z"
     }

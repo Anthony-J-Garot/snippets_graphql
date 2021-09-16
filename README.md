@@ -110,9 +110,23 @@ a more robust testing platform.
 
 ## Tokenless GraphQL Mutation Login
 
-See the Login mutation.
+If you still want to see the code, see the Login mutation in v1.0 release.
 
-This works well enough, but didn't lend well to a React front-end.
+This worked well enough, but didn't lend well to a React front-end.
+
+**Note** I'm removing all Tokenless authentication. You can see that
+code in v1.0 release. The reason is:
+
+    Migrating to postgres, the unit tests fail for login:
+    graphql.error.located_error.GraphQLLocatedError: connection already closed
+    
+    This is from create_cursor in psycop2.
+
+    One suggestion is to pre-fetch data. I didn't chase that down.
+    
+    This guy has the same exact same issue:
+    https://www.mail-archive.com/django-users@googlegroups.com/msg206235.html
+    https://github.com/datadvance/DjangoChannelsGraphqlWs/issues/76
 
 ## authToken through JWT
 
@@ -121,6 +135,89 @@ What this means on this React front-end is:
 
 1. Uses a mutation to request a token.
 2. Sends back the token through a header.
+
+# Migrating from sqlite3 to postgres
+
+I'm running into the following error (again) while running the unit tests
+in test_subscriptions/.
+
+`django.db.utils.OperationalError: database table is locked: snippets_snippet`
+
+I had that early into the project, and thought I had resolved it.
+Apparently it will keep coming back until I switch to a better DB.
+
+I will spin up a Docker instance of postgres. I've added some tooling
+to make it easy to start. I didn't use a Dockerfile. 
+Look in postgres/.container.sh for specifics.
+
+## To start postgres server
+
+```
+$ cd postgres/
+$ ./postgres.sh run
+```
+
+## Login to psql
+``` 
+$ ./postgres.sh shell
+# psql -U postgres
+```
+
+## Build the snippets DB
+
+```
+We need a DB owner
+postgres=# CREATE USER django WITH PASSWORD '*************';
+
+The Owner will create the DB and test DB
+postgres=# CREATE DATABASE snippets WITH OWNER django ENCODING 'utf-8';
+postgres=# CREATE DATABASE test_snippets WITH OWNER django ENCODING 'utf-8';
+
+Per https://stackoverflow.com/a/63345849/4171820
+I don't give the user CREATEDB permissions
+```
+~~postgres=# ALTER USER django CREATEDB;~~
+
+## In Django
+
+I put the postgres connection parameters into environment variables in 
+~/.bash_profile for convenience. There are many ways to handle this, e.g.
+AWS Secrets.
+
+```
+export POSTGRES_USER='django'
+export POSTGRES_PASSWORD='****************'
+```
+
+## Migrate the data from SQLite3 to postgres
+
+``` 
+Get a full dump of all existing data in JSON format
+$ ./create_fixtures.sh
+
+Remove all migrations so we can have a single clean file
+$ rm ./snippets/migrations/*
+
+Build a migration script (based upon models.py)
+$ python manage.py makemigrations
+
+Now do the migration
+$ python3 manage.py migrate
+
+Not 100% sure what this does. :-D
+$ python manage.py shell
+In [1]: from django.contrib.contenttypes.models import ContentType
+In [2]: ContentType.objects.all().delete()
+Out[2]: (35, {'auth.Permission': 28, 'contenttypes.ContentType': 7})
+In [3]: quit
+
+Import all the things
+$ python manage.py loaddata fixtures.json
+```
+
+Now look inside the DB using psql or PyCharm's Database
+tool, and/or run some unit tests to see if everything is 
+copasetic.
 
 # Useful links / resources
 

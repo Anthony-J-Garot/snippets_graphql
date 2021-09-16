@@ -1,8 +1,10 @@
+import graphql_jwt.exceptions
 from graphene_django.utils.testing import GraphQLTestCase  # This has some documentation embedded
 import json
 from django.conf import settings
-from . import authenticate_jwt, login_tokenless
-
+from . import authenticate_jwt
+from django.contrib.auth.models import User
+from snippets import whoami
 
 # ./runtests.sh test_mutations
 class SnippetsTestCase(GraphQLTestCase):
@@ -53,7 +55,7 @@ class SnippetsTestCase(GraphQLTestCase):
             "title": "This is a new snippet",
             "body": "Homer simpsons was here",
             "private": True,
-            "owner": "AnonymousUser"
+            "user": 2
         }
 
         # Here I request back only those items specified in the snippet_payload
@@ -66,7 +68,7 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
       title
       body
       private
-      owner
+      user { id, username, email }
     }
     ok
   }
@@ -92,39 +94,9 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
 
         # Ensure values passed through
         self.assertNotEquals(
-            snippet_payload['owner'],
-            content['data']['createFormSnippet']['snippet']['owner'],
+            snippet_payload['user'],
+            content['data']['createFormSnippet']['snippet']['user'],
             "The owner should not be AnonymousUser for this test"
-        )
-
-    # ./runtests.sh test_mutations test_login_mutation
-    def test_login_mutation(self):
-
-        # First test with valid user credentials
-        payload = {
-            "input": {
-                "username": "john.smith",
-                "password": "withscores4!"
-            }
-        }
-
-        is_valid = login_tokenless(self, payload)
-        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
-
-        # See what happens with invalid credentials
-        payload = {
-            "input": {
-                "username": "john.smith",
-                "password": "BAD PASSWD!"
-            }
-        }
-
-        is_valid = login_tokenless(self, payload)
-
-        # Ensure BAD
-        self.assertFalse(
-            is_valid,
-            "Authentication should NOT have occurred for username [{}]".format(payload['input']['username'])
         )
 
     # ./runtests.sh test_mutations test_logout_mutation
@@ -132,42 +104,15 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
 
         # First test with valid user credentials
         payload = {
-            "input": {
-                "username": "john.smith",
-                "password": "withscores4!"
-            }
+            "username": "john.smith",
+            "password": "withscores4!"
         }
 
-        is_valid = login_tokenless(self, payload)
-        self.assertTrue(is_valid, "User [{}] did not authenticate".format(payload['input']['username']))
+        token = authenticate_jwt(self, payload)
 
         # Now logout the user
-        response = self.query(
-            '''
-mutation mutLogout {
-  logout {
-    ok
-  }
-}
-            ''',
-            op_name='mutLogout',
-            variables={}
-        )
-
-        content = json.loads(response.content)
-        if settings.DEBUG:
-            print(json.dumps(content, indent=4))
-
-        # This validates the status code and if there are errors
-        self.assertResponseNoErrors(response)
-
-        is_valid = content['data']['logout']['ok']
-        print(f"is_valid [{is_valid}]")
-
-        self.assertTrue(
-            is_valid,
-            "Username [{}] should have been logged out".format(payload['input']['username'])
-        )
+        # TODO This needs to be handled better at the API level
+        # https://github.com/flavors/django-graphql-jwt/issues/11#issuecomment-463148810
 
     # ./runtests.sh test_mutations test_snippet_create_mutation
     def test_snippet_create_mutation(self):
@@ -340,3 +285,46 @@ mutation deleteSnippet($id: ID!) {
             content['data']['verifyToken']['payload']['username'],
             "User should have been returned"
         )
+
+    # ./runtests.sh test_mutations test_verify_token_expired
+    def test_verify_token_expired(self):
+        """
+Tests that a stale token is properly trapped and handled.
+        """
+
+        # This token is good and stale. It expired many moons ago.
+        token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImpvaG4uc21pdGgiLCJleHAiOjE2MzA0NDk0NjQsIm9yaWdJYXQiOjE2MzA0NDkxNjR9.8iOC1VuZtnHFeCc2YVxOMa9p77jeSIyF8aqELo6eZCU"
+
+        self.query(
+            '''
+            mutation mutVerifyJWT($token: String!) {
+              verifyToken(token: $token) {
+                payload
+              }
+            }
+            ''',
+            op_name='mutVerifyJWT',
+            variables={"token": token}
+        )
+
+        self.assertRaises(graphql_jwt.exceptions.JSONWebTokenExpired)
+
+    # Whoami is a helper function, but it's based upon a mutation, so testing it here
+    # ./runtests.sh test_mutations test_whoami
+    def test_whoami(self):
+        """
+Tests that whoami helper function works.
+        """
+
+        # This token is good and stale. It expired many moons ago.
+        token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImpvaG4uc21pdGgiLCJleHAiOjE2MzA0NDk0NjQsIm9yaWdJYXQiOjE2MzA0NDkxNjR9.8iOC1VuZtnHFeCc2YVxOMa9p77jeSIyF8aqELo6eZCU"
+
+        info = lambda: None
+        info.context = lambda: None
+        info.context.META = {}
+        info.context.META["HTTP_AUTHORIZATION"] = f"JWT {token}"
+        info.context.user = User.objects.get(pk=2)
+
+        user = whoami(info)
+
+        self.assertRaises(graphql_jwt.exceptions.JSONWebTokenExpired)

@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# Run this after you change a model in the models.py file.
+# To create table in the database with Django is to create a django model 
+# with all required fields and then create migrations and apply them.
+# So:
+# 	1. Alter snippets/models.py
+#	2. Run this script 
 #
-# If he doesn't come right away:
+# And if he doesn't come right away . . . .
 #
 #	$ rm snippets/migrations/*.py
 #	$ sqlite3 db.sqlite3

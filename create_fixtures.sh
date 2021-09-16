@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Use this script to create fixture data.
+# Use this script to create fixture data for unit tests.
 # https://stackoverflow.com/questions/6153113/how-to-create-a-fixture-file
 #
 # To use the fixtures in unit tests, simply add to the top of the class:
 #		fixtures = ['fixtures.json',]
-# or whatever the file is called.
+# (or whatever the file is called).
 
 PYTHON=/usr/bin/python3
 PYTHON_ARGS=-Wa

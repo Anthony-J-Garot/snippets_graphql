@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 from pathlib import Path
+import datetime
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,15 +91,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+DB_USER = os.environ.get('POSTGRES_USER')
+DB_PWD = os.environ.get('POSTGRES_PASSWORD')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'OPTIONS': {
-        'timeout': 20,
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'snippets',
+        'USER': DB_USER,
+        'PASSWORD': DB_PWD,
+        'HOST': '192.168.2.99',
+        'PORT': 5432,
+
     }
 }
+
+# The older, sqlite way
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     },
+#     'OPTIONS': {
+#         'timeout': 20,
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -156,6 +173,14 @@ GRAPHENE = {
     'MIDDLEWARE': [
         "graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
+}
+
+# https://django-graphql-jwt.domake.io/settings.html
+GRAPHQL_JWT = {
+    'JWT_PAYLOAD_HANDLER': 'mysite.schema.jwt_custom_payload_handler',
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=10)  # The default is 10 days, but obviously this can be changed.
 }
 
 # This is easy, but opens the server up to attack
