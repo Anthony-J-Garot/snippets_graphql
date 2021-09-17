@@ -33,10 +33,13 @@ Rules:
 2. All users can see their own snippets regardless of Public/Private.
         """
 
+
         # See who I am based upon the web token
         jwt_user = whoami(info)
         username = str(info.context.user)
         user_id = info.context.user.id
+
+        # print(f"LIMITED: checking . . . {jwt_user.id} != {user_id}")
         if jwt_user.id != user_id:
             # Different users? Shouldn't be.
             print(f"LIMITED: whoami . . . {jwt_user.username}({jwt_user.id} != {username}({user_id})")
@@ -45,20 +48,19 @@ Rules:
             # Same, but anonymous
             print(f"LIMITED: Confirmed to be AnonymousUser")
             return Snippet.objects.filter(private=False)
-
-        if settings.DEBUG:
+        else:
             print(f"LIMITED: Authenticated and acknowledged to be [{username}]")
 
         if info.context.user.is_authenticated:
             # It's good to be the king
             if info.context.user.is_superuser:
-                print("Super user sees all")
+                print("LIMITED: Super user sees all")
                 return Snippet.objects.all()
 
             # Otherwise, the user gets to see Public and their own records
             return Snippet.objects.filter(Q(private=False) | Q(user_id=user_id))
         else:
-            print("AnonymousUser sees less")
+            print("LIMITED: AnonymousUser sees less")
             return Snippet.objects.filter(private=False)
 
 

@@ -79,12 +79,8 @@ query qryAllSnippets {
         rowcount = len(content['data']['allSnippets'])
         self.assertEquals(8, rowcount, "Should have found 8 rows")
 
-    # ./runtests.sh test_queries test_snippets_limited
-    def test_snippets_limited(self):
-        """
-Test to returns all limited set of snippet records based upon
-the logged in user.
-        """
+    # ./runtests.sh test_queries test_token_auth_limited_query
+    def test_token_auth_limited_query(self):
 
         payload = {
             "username": "john.smith",
@@ -93,23 +89,45 @@ the logged in user.
 
         token = authenticate_jwt(self, payload)
 
+        # Now see what this user can see.
+        # Note the headers!
         response = self.query(
-            '''
-query qryLimitedSnippets {
-  limitedSnippets {
-    id
-    title
-    body
-    created
-    private
-    user { id, username, email }
-    __typename
-  }
-  __typename
-}
-            ''',
+            LIMITED_SNIPPETS_QUERY,
             op_name='qryLimitedSnippets',
-            headers = {"HTTP_AUTHORIZATION": f"JWT {token}"}
+            variables={},
+            headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if there are errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        # The count is dependent upon seed data in the fixtures
+        EXPECTED_LIMITED_ROWCOUNT = 6
+        self.assertEquals(
+            EXPECTED_LIMITED_ROWCOUNT,
+            len(content['data']['limitedSnippets']),
+            "User should have access to [{}] records".format(EXPECTED_LIMITED_ROWCOUNT)
+        )
+
+    # ./runtests.sh test_queries test_snippets_limited_anon
+    def test_snippets_limited_anon(self):
+        """
+Test to returns all limited set of snippet records based upon
+the AnonymousUser.
+        """
+
+        # The anonymous user should be automatic if no auth_token is passed.
+        # Set the header to nuthin'.
+        response = self.query(
+            LIMITED_SNIPPETS_QUERY,
+            op_name='qryLimitedSnippets',
+            variables={},
+            headers={"HTTP_AUTHORIZATION": ""}
         )
 
         # Note: the content is returned in bytes, which we can easily convert to
@@ -123,7 +141,7 @@ query qryLimitedSnippets {
 
         # How many rows returned?
         rowcount = len(content['data']['limitedSnippets'])
-        self.assertEquals(6, rowcount, "Should have found 6 rows")
+        self.assertEquals(4, rowcount, "Should have found 4 rows")
 
     # ./runtests.sh test_queries test_snippets_by_id
     def test_snippets_by_id(self):
@@ -258,7 +276,7 @@ query qryByOwner {
 }
             ''',
             op_name='qryByOwner',
-            headers = {"HTTP_AUTHORIZATION": f"JWT {token}"}
+            headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
         )
 
         # Note: the content is returned in bytes, which we can easily convert to
@@ -321,50 +339,19 @@ query qryIdentifyUser{
             f"Username should have been [{payload['username']}]"
         )
 
-    # ./runtests.sh test_queries test_token_auth_limited_query
-    def test_token_auth_limited_query(self):
 
-        payload = {
-            "username": "john.smith",
-            "password": "withscores4!"
-        }
-
-        token = authenticate_jwt(self, payload)
-
-        # Now see what this user can see.
-        # Note the headers!
-        response = self.query(
-            '''
+LIMITED_SNIPPETS_QUERY = '''
 query qryLimitedSnippets {
   limitedSnippets {
     id
     title
     bodyPreview
+    created
     owner
-    user { id, username, email }
     isPrivate: private
+    user { id, username, email }
     __typename
   }
   __typename
 }
-            ''',
-            op_name='qryLimitedSnippets',
-            variables={},
-            headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
-        )
-
-        content = json.loads(response.content)
-        if settings.DEBUG:
-            print(json.dumps(content, indent=4))
-
-        # This validates the status code and if there are errors
-        self.assertResponseNoErrors(response)
-
-        # Ensure OK
-        # The count is dependent upon seed data in the fixtures
-        EXPECTED_LIMITED_ROWCOUNT = 6
-        self.assertEquals(
-            EXPECTED_LIMITED_ROWCOUNT,
-            len(content['data']['limitedSnippets']),
-            "User should have access to [{}] records".format(EXPECTED_LIMITED_ROWCOUNT)
-        )
+'''
