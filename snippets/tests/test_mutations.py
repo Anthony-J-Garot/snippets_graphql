@@ -6,6 +6,7 @@ from . import authenticate_jwt
 from django.contrib.auth.models import User
 from snippets import whoami
 
+
 # ./runtests.sh test_mutations
 class SnippetsTestCase(GraphQLTestCase):
     fixtures = ['fixtures.json', ]
@@ -37,8 +38,8 @@ class SnippetsTestCase(GraphQLTestCase):
     #
     # There is another test for the straight mutation based graphene create.
     # Not sure if I find that either is better than the other.
-    # ./runtests.sh test_mutations test_model_form_authenticated_user_create_mutation
-    def test_model_form_authenticated_user_create_mutation(self):
+    # ./runtests.sh test_mutations test_snippet_create_model_auth_mutation
+    def test_snippet_create_model_auth_mutation(self):
 
         # First we need a non-Anonymous user. Login using JWT authToken.
         authentication_payload = {
@@ -47,33 +48,25 @@ class SnippetsTestCase(GraphQLTestCase):
         }
 
         token = authenticate_jwt(self, authentication_payload)
-        print(f"User [{authentication_payload['username']}] authenticated with token [{token}]")
+        print(f"TEST: User [{authentication_payload['username']}] authenticated with token [{token}]")
 
-        # NOTE! The owner passed-in is AnonymousUser. After creation, the owner
-        # should be john.smith.
+        # NOTE!
+        # The owner passed-in is Admin (1) even though after
+        # creation the owner should be john.smith (2). Why do I
+        # pass in Admin? To prove that the code forces the owner
+        # to the logged in (or AnonymousUser) regardless of who
+        # is sent.
         snippet_payload = {
             "title": "This is a new snippet",
             "body": "Homer simpsons was here",
             "private": True,
-            "user": 2
+            "user": 1
         }
 
         # Here I request back only those items specified in the snippet_payload
         # for the ease of the unit test.
         response = self.query(
-            '''
-mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
-  createFormSnippet(input: $input) {
-    snippet {
-      title
-      body
-      private
-      user { id, username, email }
-    }
-    ok
-  }
-}
-            ''',
+            CREATE_SNIPPET_MODEL_MUTATION,
             op_name='mutFormCreateSnippet',
             variables={"input": snippet_payload},
             headers={"HTTP_AUTHORIZATION": f"JWT {token}"}
@@ -97,6 +90,47 @@ mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
             snippet_payload['user'],
             content['data']['createFormSnippet']['snippet']['user'],
             "The owner should not be AnonymousUser for this test"
+        )
+
+    # This tests the "model form" version of create for the anonymous user.
+    #
+    # ./runtests.sh test_mutations test_snippet_create_model_anon_mutation
+    def test_snippet_create_model_anon_mutation(self):
+
+        # NOTE! The owner passed-in is Admin (1) even though
+        # the resultant record will be owned by AnonymousUser.
+        snippet_payload = {
+            "title": "I gotta have more cowbell",
+            "body": "THE Bruce Dickenson",
+            "private": False,
+            "user": 1
+        }
+
+        # Note the blank authorization header
+        response = self.query(
+            CREATE_SNIPPET_MODEL_MUTATION,
+            op_name='mutFormCreateSnippet',
+            variables={"input": snippet_payload},
+            headers={"HTTP_AUTHORIZATION": ""}
+        )
+
+        content = json.loads(response.content)
+        if settings.DEBUG:
+            print(json.dumps(content, indent=4))
+
+        # This validates the status code and if there are errors
+        self.assertResponseNoErrors(response)
+
+        # Ensure OK
+        self.assertTrue(
+            content['data']['createFormSnippet']['ok'],
+            "Record should have been created"
+        )
+
+        # Ensure values passed through
+        self.assertIsNone(
+            content['data']['createFormSnippet']['snippet']['user'],
+            "The owner should be AnonymousUser for this test"
         )
 
     # ./runtests.sh test_mutations test_logout_mutation
@@ -328,3 +362,18 @@ Tests that whoami helper function works.
         user = whoami(info)
 
         self.assertRaises(graphql_jwt.exceptions.JSONWebTokenExpired)
+
+
+CREATE_SNIPPET_MODEL_MUTATION = '''
+mutation mutFormCreateSnippet($input: FormCreateSnippetMutationInput!) {
+  createFormSnippet(input: $input) {
+    snippet {
+      title
+      body
+      private
+      user { id, username, email }
+    }
+    ok
+  }
+}
+'''

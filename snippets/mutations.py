@@ -96,7 +96,10 @@ The username may be passed by the form, but it is replaced with the authenticate
         """
 
         user = whoami(info)
-        print(f"whoami returned user_id [{user.id}] and username [{user.username}]")
+        if user is not None:
+            print(f"whoami returned user_id [{user.id}] and username [{user.username}]")
+        else:
+            print("Creating as owner AnonymousUser")
 
         # shorthand to the model instance.
         # PyCharm complains, "Unresolved attribute reference 'instance' for class 'FormCreateSnippetMutation'",
@@ -110,7 +113,7 @@ The username may be passed by the form, but it is replaced with the authenticate
         # value through the form. If no user was logged in, AnonymousUser will pass thru.
         if settings.DEBUG:
             print(f"Passed owner from form was [{form['user'].data}]")
-            print(f"Forcing owner to [{user.username}]")
+            print(f"Forcing owner to [{user}]")
         snippet.user = user  # Set by the API only; this is AnonymousUser when not authenticated
 
         # Various ways we can see all the things
