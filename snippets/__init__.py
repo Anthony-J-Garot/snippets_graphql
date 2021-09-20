@@ -1,5 +1,5 @@
-import graphql_jwt.exceptions
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 
 def whoami(info):
@@ -20,8 +20,9 @@ mutation mutVerifyJWT($token: String!) {
 }
 '''
 
-    # Assume AnonymousUser until proven authenticated
-    user = None
+    # Assume Noop user (unauthenticated user in Users table) until proven authenticated.
+    # See README.md note for why this is the case.
+    user = get_user_model().objects.get(pk=3)
 
     # An authenticated user must have a JWT Token.
     # No token = no way José!
@@ -48,7 +49,7 @@ mutation mutVerifyJWT($token: String!) {
                 user_id = payload['user_id']
 
                 # Get the actual User record
-                user = User.objects.get(pk=payload['user_id'])
+                user = get_user_model().objects.get(pk=payload['user_id'])
                 if settings.DEBUG:
                     print(f"whoami(): User from mutVerifyJWT [{user_id}][{payload['username']}]")
                     print("")

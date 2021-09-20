@@ -19,14 +19,18 @@ PYTHON_ARGS=
 
 # MANAGE_OPTIONS
 # 		--pattern="tests_*.py"
-#		--keepdb = don't destroy test DB when done
 #		--settings=path.to.settings
 #		--debug-mode = sets settings.DEBUG to True (as long as not overwritten in setUpClass())
 #		--debug-sql = dumps SQL transactions. Useful when relevant; otherwise, a lot of clutter.
 #		--reverse = run tests in reverse order
 #		-v [0-3] = verbose mode. I haven't seen much added benefit to this flag.
 #		--pdb = runs ipdb; doesn't work with --debug-sql for some reason ???
+#		--keepdb = don't destroy test DB when done. Note: having this speeds up the tests
+#			considerably; however, you have to turn this off to update the test_snippets
+#			DB if there are records that must be there. For example, if the unit tests
+#			expect User id=3, and you just created that User.
 MANAGE_OPTS="--keepdb --debug-mode --reverse --failfast -v 2"
+#MANAGE_OPTS="--debug-mode --reverse --failfast -v 2"
 
 if [[ "$1" == "" ]]; then
 	# All the things!

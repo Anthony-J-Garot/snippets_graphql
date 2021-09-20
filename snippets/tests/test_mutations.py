@@ -3,7 +3,7 @@ from graphene_django.utils.testing import GraphQLTestCase  # This has some docum
 import json
 from django.conf import settings
 from . import authenticate_jwt
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from snippets import whoami
 
 
@@ -127,9 +127,10 @@ class SnippetsTestCase(GraphQLTestCase):
             "Record should have been created"
         )
 
-        # Ensure values passed through
-        self.assertIsNone(
-            content['data']['createFormSnippet']['snippet']['user'],
+        # Ensure the "noop" user, i.e. AnonymousUser, passed through
+        self.assertEquals(
+            'noop',
+            content['data']['createFormSnippet']['snippet']['user']['username'],
             "The owner should be AnonymousUser for this test"
         )
 
@@ -357,7 +358,7 @@ Tests that whoami helper function works.
         info.context = lambda: None
         info.context.META = {}
         info.context.META["HTTP_AUTHORIZATION"] = f"JWT {token}"
-        info.context.user = User.objects.get(pk=2)
+        info.context.user = get_user_model().objects.get(pk=2)
 
         user = whoami(info)
 

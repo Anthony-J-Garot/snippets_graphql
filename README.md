@@ -136,6 +136,14 @@ What this means on this React front-end is:
 1. Uses a mutation to request a token.
 2. Sends back the token through a header.
 
+## GraphQL issue with User
+
+Initially I had a text field "owner" to describe who created the
+snippet. Then I changed this field to point to the auth_user table, 
+i.e. a User model record.
+
+A problem entered with the AnonymousUser, which isn't a real user in the database. Somewhere in DjangoModelFormMutation the "user" field is an ID!, which means required, despite the model being a ForeignKey with nulls expressly allowed. It turns out that I cannot send in null or 0 or any non-existent User user_id. The raised error comes from under the hood so I cannot readily intercept it. I decided to create a "noop" user with user_id 3. This will act as a real record for a Public User such that I can create records without being logged in.
+
 # Migrating from sqlite3 to postgres
 
 I'm running into the following error (again) while running the unit tests
@@ -166,6 +174,9 @@ $ ./postgres.sh shell
 ## Build the snippets DB
 
 ```
+Show databases
+postgres=# \l
+
 We need a DB owner
 postgres=# CREATE USER django WITH PASSWORD '*************';
 
@@ -173,10 +184,15 @@ The Owner will create the DB and test DB
 postgres=# CREATE DATABASE snippets WITH OWNER django ENCODING 'utf-8';
 postgres=# CREATE DATABASE test_snippets WITH OWNER django ENCODING 'utf-8';
 
-Per https://stackoverflow.com/a/63345849/4171820
-I don't give the user CREATEDB permissions
+postgres=# ALTER USER django CREATEDB;    # NOTE below
 ```
-~~postgres=# ALTER USER django CREATEDB;~~
+
+NOTE: Per https://stackoverflow.com/a/63345849/4171820, I shouldn't 
+give the django user CREATEDB permissions. But during development, 
+if I add a user, it doesn't go into the test_snippets DB. Therefore, 
+I AM giving the django user CREATEDB, and I can get rid of 
+--keepdb in the test runner when I need to refresh the 
+test_snippets DB.
 
 ## In Django
 
