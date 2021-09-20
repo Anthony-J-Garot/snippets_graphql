@@ -39,13 +39,13 @@ Rules:
         user_id = info.context.user.id
 
         # print(f"LIMITED: checking . . . {jwt_user.id} != {user_id}")
-        if jwt_user is None or jwt_user.username == 'AnonymousUser':
+        if jwt_user is None or user_id is None or jwt_user.username == 'AnonymousUser':
             # Same, but anonymous
             print(f"LIMITED: Confirmed to be AnonymousUser")
             return Snippet.objects.filter(private=False)
         elif jwt_user.id != user_id:
             # Different users? Shouldn't be.
-            print("LIMITED: Different users! {}({} != {}({}). You are relegated to AnonymousUser.".format(
+            print("LIMITED: Different users! {}({}) != {}({}). You are relegated to AnonymousUser.".format(
                 jwt_user.username,
                 jwt_user.id,
                 username,

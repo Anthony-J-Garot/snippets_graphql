@@ -179,7 +179,8 @@ GRAPHENE = {
 
 # https://django-graphql-jwt.domake.io/settings.html
 GRAPHQL_JWT = {
-    'JWT_PAYLOAD_HANDLER': 'mysite.schema.jwt_custom_payload_handler',
+    'JWT_PAYLOAD_HANDLER': 'snippets.utils.jwt_custom_payload_handler',
+    'JWT_DECODE_HANDLER': 'snippets.utils.jwt_custom_decode_handler',
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=10)  # The default is 10 days, but obviously this can be changed.

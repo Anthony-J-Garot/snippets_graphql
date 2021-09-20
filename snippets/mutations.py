@@ -6,7 +6,6 @@ https://docs.graphene-python.org/en/latest/types/mutations/
 """
 import datetime
 
-import django
 import graphene
 import graphql_jwt
 import asgiref
@@ -14,8 +13,7 @@ from channels.auth import login, logout
 from graphene_django.forms.mutation import DjangoModelFormMutation
 import copy
 from django.conf import settings
-
-from django.contrib.auth import get_user_model
+from snippets.utils import generate_jti
 
 # Project imports
 from .models import Snippet
@@ -183,10 +181,6 @@ class DeleteSnippetMutation(graphene.Mutation):
         # Notice we return an instance of this mutation
         return DeleteSnippetMutation(ok=True)
 
-
-
-
-
         # Save the session because `channels.auth.login` does not do this.
         info.context.session.save()
 
@@ -217,7 +211,21 @@ class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
 
     @classmethod
     def resolve(cls, root, info, **kwargs):
-        print(f"*** USER [{info.context.user}] AUTHENTICATED - MY OWN TOKENAUTH ***")
+        print(f"*** USER [{info.context.user}] AUTHENTICATED - VIA JWT token_auth ***")
+
+        # Not sure what root is here, but it's None
+        if root is not None:
+            print(f"root: {root}")
+
+        # from graphql_jwt.utils import jwt_payload as graphql_jwt_payload
+        # payload = graphql_jwt_payload(info.context.user, info.context)
+
+        # The Username passes through
+        print(f"username: {kwargs['username']}")
+
+        info.context.user.jti = generate_jti()
+        info.context.user.save()
+
         return cls(user=info.context.user)
 
 

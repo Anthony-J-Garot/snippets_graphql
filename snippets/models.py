@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from snippets.utils import generate_jti
 
 
 # Define a single Django model for use in the tutorial.
@@ -40,5 +41,12 @@ Returns the string version of user, which is the username, and what I wanted.
 
 # Taking token onto the AUTH_USER_MODEL.
 class CustomUser(AbstractUser):
-    # I think these are 259 bytes, so pad a little just in case
-    token = models.CharField(null=True, max_length=270)
+    jti = models.CharField(
+        "jwt id",
+        max_length=64,
+        blank=False,
+        null=False,
+        editable=False,
+        default=generate_jti,
+        help_text="JWT tokens for the user get revoked when JWT id has regenerated.",
+    )

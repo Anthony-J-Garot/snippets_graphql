@@ -30,10 +30,10 @@ IPshell.dummy_mode = False  # Turn off all IPshell calls
 
 
 # Separated this out for re-use
-def authenticate_jwt(cls, payload):
+def authenticate_jwt(cls, variables):
     """
 Used to authenticate a particular user.
-Input: payload of username & password
+Input: variables of username & password
 Returns: token from mutation.
     """
     response = cls.query(
@@ -41,13 +41,13 @@ Returns: token from mutation.
 mutation mutSignonJWT($username: String!, $password: String!) {
   tokenAuth(username: $username, password: $password) {
     token
-    payload
+    variables
     refreshExpiresIn
   }
 }
         ''',
         op_name='mutSignonJWT',
-        variables=payload
+        variables=variables
     )
 
     content = json.loads(response.content)
@@ -59,8 +59,8 @@ mutation mutSignonJWT($username: String!, $password: String!) {
 
     # Ensure OK
     cls.assertTrue(
-        content['data']['tokenAuth']['payload']['username'],
-        "Authentication should have occurred for username [{}]".format(payload['username'])
+        content['data']['tokenAuth']['variables']['username'],
+        "Authentication should have occurred for username [{}]".format(variables['username'])
     )
     cls.assertTrue('token' in content['data']['tokenAuth'], "Token should have been found")
 

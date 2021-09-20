@@ -47,4 +47,5 @@ class SnippetType(DjangoObjectType):
 
 class UserType(DjangoObjectType):
     class Meta:
+        # This SHOULD get the CustomUser
         model = get_user_model()
