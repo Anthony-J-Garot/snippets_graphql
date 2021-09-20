@@ -110,8 +110,6 @@ a more robust testing platform.
 
 ## Tokenless GraphQL Mutation Login
 
-If you still want to see the code, see the Login mutation in v1.0 release.
-
 This worked well enough, but didn't lend well to a React front-end.
 
 **Note** I'm removing all Tokenless authentication. You can see that
@@ -135,6 +133,14 @@ What this means on this React front-end is:
 
 1. Uses a mutation to request a token.
 2. Sends back the token through a header.
+
+### Birth of the CustomUser model
+
+I wanted everything in the User model, so I extended to the CustomUser
+model and tacked on token. Thus I can check every transaction to see
+if the user is still logged in and not rely on the front-end or token
+expiration. That is, I can actually create a Logout function on the
+back-end.
 
 ## GraphQL issue with User
 

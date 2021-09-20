@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 
 # Define a single Django model for use in the tutorial.
@@ -35,3 +36,9 @@ class Snippet(models.Model):
 Returns the string version of user, which is the username, and what I wanted.
         """
         return self.user
+
+
+# Taking token onto the AUTH_USER_MODEL.
+class CustomUser(AbstractUser):
+    # I think these are 259 bytes, so pad a little just in case
+    token = models.CharField(null=True, max_length=270)

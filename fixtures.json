@@ -1,6 +1,6 @@
 [
 {
-    "model": "auth.user",
+    "model": "snippets.customuser",
     "fields": {
         "password": "pbkdf2_sha256$260000$RJZxFyOFf34dvWHXECkEjf$QcR7AUIAuyS0i25OB3aRxN8Y1hEffI6njZx6SfbT9R8=",
         "last_login": "2021-09-17T20:39:54.739Z",
@@ -17,7 +17,7 @@
     }
 },
 {
-    "model": "auth.user",
+    "model": "snippets.customuser",
     "fields": {
         "password": "pbkdf2_sha256$260000$U3MFGRnXiscdcQtBCwoeZI$m47dCWj5ngpEONpkfHMjS2Y9IXAlJmRG1mwFHH6/Zms=",
         "last_login": "2021-09-16T16:13:41.948Z",
@@ -34,7 +34,7 @@
     }
 },
 {
-    "model": "auth.user",
+    "model": "snippets.customuser",
     "fields": {
         "password": "pbkdf2_sha256$260000$0HT1TlWooVc2A2iMHiA141$K9b88Jz/35OfUh1k4IatZ0yJnHPoc6aNh1RAsZJ9GTk=",
         "last_login": null,
@@ -492,78 +492,6 @@
         ],
         "private": true,
         "created": "2021-08-31T14:49:25.108Z"
-    }
-},
-{
-    "model": "admin.logentry",
-    "pk": 1,
-    "fields": {
-        "action_time": "2021-07-29T22:33:44.938Z",
-        "user": [
-            "admin"
-        ],
-        "content_type": [
-            "auth",
-            "user"
-        ],
-        "object_id": "2",
-        "object_repr": "john.smith",
-        "action_flag": 1,
-        "change_message": "[{\"added\": {}}]"
-    }
-},
-{
-    "model": "admin.logentry",
-    "pk": 2,
-    "fields": {
-        "action_time": "2021-07-29T22:34:09.328Z",
-        "user": [
-            "admin"
-        ],
-        "content_type": [
-            "auth",
-            "user"
-        ],
-        "object_id": "2",
-        "object_repr": "john.smith",
-        "action_flag": 2,
-        "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\", \"Email address\", \"Staff status\"]}}]"
-    }
-},
-{
-    "model": "admin.logentry",
-    "pk": 3,
-    "fields": {
-        "action_time": "2021-09-17T20:40:26.562Z",
-        "user": [
-            "admin"
-        ],
-        "content_type": [
-            "auth",
-            "user"
-        ],
-        "object_id": "3",
-        "object_repr": "noop",
-        "action_flag": 1,
-        "change_message": "[{\"added\": {}}]"
-    }
-},
-{
-    "model": "admin.logentry",
-    "pk": 4,
-    "fields": {
-        "action_time": "2021-09-17T20:40:57.665Z",
-        "user": [
-            "admin"
-        ],
-        "content_type": [
-            "auth",
-            "user"
-        ],
-        "object_id": "3",
-        "object_repr": "noop",
-        "action_flag": 2,
-        "change_message": "[{\"changed\": {\"fields\": [\"First name\", \"Last name\", \"Email address\", \"Active\"]}}]"
     }
 }
 ]

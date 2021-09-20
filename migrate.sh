@@ -21,7 +21,13 @@
 PYTHON=/usr/bin/python3
 APP=snippets
 
-$PYTHON manage.py makemigrations $APP
-if [[ $? -eq 0 ]]; then
-    $PYTHON manage.py migrate
+# Give a command line option to actually load the data
+if [[ "$1" -eq "load" ]]; then
+	$PYTHON manage.py loaddata fixtures.json
+else
+	# Normal use is to make the migrations then migrate.
+	$PYTHON manage.py makemigrations $APP
+	if [[ $? -eq 0 ]]; then
+		$PYTHON manage.py migrate
+	fi
 fi
