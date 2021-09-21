@@ -39,7 +39,8 @@ Returns the string version of user, which is the username, and what I wanted.
         return self.user
 
 
-# Taking token onto the AUTH_USER_MODEL.
+# Tacking JTI onto the AUTH_USER_MODEL.
+# https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#extending-user
 class CustomUser(AbstractUser):
     jti = models.CharField(
         "jwt id",

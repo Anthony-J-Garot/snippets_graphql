@@ -181,30 +181,30 @@ class DeleteSnippetMutation(graphene.Mutation):
         # Notice we return an instance of this mutation
         return DeleteSnippetMutation(ok=True)
 
-        # Save the session because `channels.auth.login` does not do this.
-        info.context.session.save()
 
-        return Login(ok=True)
-
-
-# https://docs.djangoproject.com/en/3.2/topics/auth/default/#how-to-log-a-user-out
+# Using graphql_jwt instead of Django native logout. v1.0 of this project did
+# use Django native login/logout.
 class Logout(graphene.Mutation):
     """
 Graphene Mutation that performs logout functionality.
-The purpose of this is to be called from the front-end.
+The purpose of this is to be called from the front-end
+but to also logout the user on the back-end.
     """
     ok = graphene.Boolean(required=True)
+    id = graphene.ID()
 
-    @staticmethod
-    def mutate(self, info):
-        asgiref.sync.async_to_sync(logout)(info.context.__dict__)
-
-        # Save the session because `channels.auth.login` does not do this.
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+        # print(f"user is {info.context.user}")
+        user = info.context.user
+        user.jti = generate_jti()
+        user.save()
         info.context.session.save()
 
-        return Logout(ok=True)
+        return cls(ok=True, id=user.id)
 
 
+# This is essentially Login().
 # I can extend the JWT functionality by adding my own resolve.
 class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
     user = graphene.Field(UserType)
@@ -223,8 +223,10 @@ class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
         # The Username passes through
         print(f"username: {kwargs['username']}")
 
+        # https://github.com/flavors/django-graphql-jwt/issues/11#issuecomment-924068942
         info.context.user.jti = generate_jti()
         info.context.user.save()
+        info.context.session.save()
 
         return cls(user=info.context.user)
 

@@ -41,7 +41,7 @@ Returns: token from mutation.
 mutation mutSignonJWT($username: String!, $password: String!) {
   tokenAuth(username: $username, password: $password) {
     token
-    variables
+    payload
     refreshExpiresIn
   }
 }
@@ -59,7 +59,7 @@ mutation mutSignonJWT($username: String!, $password: String!) {
 
     # Ensure OK
     cls.assertTrue(
-        content['data']['tokenAuth']['variables']['username'],
+        content['data']['tokenAuth']['payload']['username'],
         "Authentication should have occurred for username [{}]".format(variables['username'])
     )
     cls.assertTrue('token' in content['data']['tokenAuth'], "Token should have been found")

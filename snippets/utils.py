@@ -33,20 +33,21 @@ This was because I cannot key off the username directly.
 
     #         "origIat": 1631652535
     #         "exp":     1632516535,
+    EPOCH = datetime(1970, 1, 1)
     now = datetime.now()
-    origIat = int((now - datetime(1970, 1, 1)).total_seconds())
+    origIat = int((now - EPOCH).total_seconds())  # Issued At
     expiration = now + GRAPHQL_JWT['JWT_EXPIRATION_DELTA']
-    exp_seconds = int((expiration - datetime(1970, 1, 1)).total_seconds())
-    print(f"origIat [{origIat}] exp [{exp_seconds}] JTI [{user.jti}]")
+    exp_seconds = int((expiration - EPOCH).total_seconds())
+    print(f"Custom Payload:\n\torigIat [{origIat}]\n\texp [{exp_seconds}]\n\tJTI [{user.jti}]")
 
     payload = {
         user.USERNAME_FIELD: username,
         'user_id': user.id,
         'email': user.email,
-        'phone': '415-555-1212',
+        'phone': '415-555-1212',  # A future possibility
         'exp': exp_seconds,
-        'origIat': origIat,
-        'jti': user.jti
+        'origIat': origIat,  # Issue At
+        'jti': user.jti  # JWT ID
     }
     return payload
 

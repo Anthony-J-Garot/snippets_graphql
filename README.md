@@ -251,3 +251,15 @@ to the original "snippets" tutorial above.
 - [This article](https://morningpython.com/2019/12/20/how-to-build-graphql-api-with-django-7-steps/)
 was reasonable. He did point out using GraphiQL.
 - [Graphene Documentation](https://readthedocs.org/projects/graphene-django/downloads/pdf/stable/)
+- JWT
+  - The [Django GraphQL JWT Documentation](https://buildmedia.readthedocs.org/media/pdf/django-graphql-jwt/stable/django-graphql-jwt.pdf) 
+is pretty good, but it doesn't describe many of the utilities you can
+access directly in the code. 
+  - [graphql_jwt/utils.py](https://github.com/flavors/django-graphql-jwt/blob/main/graphql_jwt/utils.py)
+is an excellent resource if you need to go beyond the general 
+capabilities of the library. For example, if you want to create a
+server-side logout function.
+  - Cansin's [How to Implment Logout](https://github.com/flavors/django-graphql-jwt/issues/11#issuecomment-616806837)
+was a superlative post on how to create custom payload and decode
+handlers, to validate a user server-side and store a JTI in the DB
+for each user, and to create a server-side Logout mutation.
